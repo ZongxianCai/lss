@@ -1,0 +1,1 @@
+/usr/bin/c++ -Wno-error=unused-result -Werror=return-type  -std=c++11 -O3 -g -pipe -Wall -Werror -Wno-unused-variable -lrt -pthread -fno-strict-aliasing -Wno-error=shadow -Wno-sign-compare -rdynamic CMakeFiles/tmms.dir/main.cpp.o -o tmms 
