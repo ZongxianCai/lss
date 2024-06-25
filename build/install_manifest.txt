@@ -1,1 +1,1 @@
-/home/czx/Workspace/CppProjects/lss/build/../bin/sbin/lss
+/home/czx/workspace/CppPractice/lss/build/../bin/sbin/lss
