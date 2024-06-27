@@ -22,7 +22,8 @@ public:
 // 定义宏 testSingleton，展开为调用 Singleton 模板类的 Instance 函数，获取 TestSingleton 类的单例对象的引用
 #define testSingleton lss::base::Singleton<TestSingleton>::Instance()
 
-int main(int argc, const char ** argv)
+
+/*int main(int argc, const char ** argv)
 {
     // 使用类型自动推断获取单例对象引用的另一种方式
     // auto testSingleton = lss::base::Singleton<TestSingleton>::Instance();
@@ -32,3 +33,4 @@ int main(int argc, const char ** argv)
     
     return 0;
 }
+*/
