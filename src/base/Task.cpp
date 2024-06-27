@@ -4,14 +4,14 @@
 using namespace lss::base;
 
 // 回调构造函数的实现
-Task::Task (const TaskCallback &cb, int64_t interval)
+Task::Task(const TaskCallback &cb, int64_t interval)
 : interval_(interval), when_(TTime::NowMS() + interval), cb_(cb)
 {
 
 }
 
 // 右值回调构造函数的实现
-Task::Task (const TaskCallback &&cb, int64_t interval)
+Task::Task(const TaskCallback &&cb, int64_t interval)
 : interval_(interval), when_(TTime::NowMS() + interval), cb_(std::move(cb))
 {
 

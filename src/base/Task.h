@@ -18,10 +18,10 @@ namespace lss
         {
         public:
             // 回调构造函数
-            Task (const TaskCallback &cb, int64_t intervel);
+            Task(const TaskCallback &cb, int64_t intervel);
 
             // 右值回调构造函数
-            Task (const TaskCallback &&cb, int64_t intervel);
+            Task(const TaskCallback &&cb, int64_t intervel);
 
             // 执行任务的方法
             void Run();
