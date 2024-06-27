@@ -1,4 +1,5 @@
 #pragma once
+
 #include <pthread.h>
 #include "NonCopyable.h"
 
@@ -12,6 +13,7 @@ namespace lss
         public:
             // 显式删除默认构造函数，防止创建 Singleton 类的实例
             Singleton() = delete;
+
             // 显式删除析构函数，因为单例对象的生命周期与程序相同，不需要手动析构
             ~Singleton() = delete;
 
@@ -23,8 +25,10 @@ namespace lss
                 // 使用 pthread_once 函数确保初始化函数 Init 只被调用一次，无论 Instance 被调用多少次（通过检查 pthread_once_t 类型的静态成员 ponce_ 来实现）
                 // 如果 Init 函数尚未被调用，pthread_once 将调用 Init 函数初始化单例对象
                 pthread_once(&ponce_, &Singleton::Init);
+                
                 return value_;
             }
+
         private:
             // 私有静态成员函数，用于初始化单例对象，可以不依赖于类的实例而直接通过类名调用
             // 它首先检查 value_ 是否已初始化，如果没有，则创建一个新的 T 类型的实例
@@ -37,8 +41,10 @@ namespace lss
                     value_ = new T();
                 }
             }
+
             // 静态成员变量，用于控制初始化函数 Init 的执行
             static pthread_once_t ponce_;
+
             // 静态成员变量，用于存储单例对象的指针
             static T *value_;
         };

@@ -9,6 +9,7 @@ class TestSingleton : public NonCopyable
 public:
     // 使用默认构造函数
     TestSingleton() = default;
+
     // 使用默认析构函数
     ~TestSingleton() = default;
 
@@ -28,5 +29,6 @@ int main(int argc, const char ** argv)
     
     // 通过宏 testSingleton 获取的单例对象引用调用 Print 函数，输出消息
     testSingleton->Print();
+    
     return 0;
 }

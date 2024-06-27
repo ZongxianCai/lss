@@ -16,6 +16,7 @@ lss/
             |-- TestSingleton.cpp 测试单例模式
             |-- Task.h 定时任务头文件
             |-- Task.cpp 定时任务方法的实现
+            |-- TaskManager.h 定时任务管理器头文件
         |-- main/
         |-- CMakeLists.txt 指定编译的源文件目录，生成程序名，编译完成后执行安装
     |-- CMakeLists.txt  设置全局编译参数，程序输出目录，编译的子目录

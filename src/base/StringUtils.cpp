@@ -61,6 +61,7 @@ std::string StringUtils::FilePath(const std::string& path)
 {
     // 查找文件路径的结束位置(/ or \)， \ 需要转义
     auto pos = path.find_last_of("/\\");
+
     // string::npos:字符串的结束位置
     if (pos != std::string::npos)
     {
@@ -79,6 +80,7 @@ std::string StringUtils::FilePath(const std::string& path)
 std::string StringUtils::FileNameExt(const std::string& path)
 {
     auto pos = path.find_last_of("/\\");
+
     if (pos != std::string::npos)
     {
         // 文件路径结束位置的后一个字符
@@ -88,6 +90,7 @@ std::string StringUtils::FileNameExt(const std::string& path)
             return path.substr(pos + 1); 
         }
     }
+    
     // 未找到，返回文件路径
     return path;
 }
@@ -97,6 +100,7 @@ std::string StringUtils::FileName(const std::string& path)
 {
     string file_name = FileNameExt(path);
     auto pos = path.find_last_of(".");
+
     if (pos != std::string::npos)
     {
         if (pos != 0)
@@ -113,6 +117,7 @@ std::string StringUtils::Extension(const std::string& path)
 {
     string file_name = FileNameExt(path);
     auto pos = file_name.find_last_of(".");
+
     if (pos != std::string::npos)
     {
         if (pos != 0 && pos + 1 < file_name.size())
@@ -139,6 +144,7 @@ std::vector<std::string> StringUtils::SplitString(const string& s, const string&
     // 查找分隔符位置的索引
     size_t last = 0;
     size_t next = 0;
+    
     // 循环查找和分割字符串，查找从last位置开始的第一个delimiter出现的位置next
     while ((next = s.find(delimiter, last)) != std::string::npos)
     {

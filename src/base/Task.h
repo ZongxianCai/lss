@@ -1,4 +1,5 @@
 #pragma once
+
 #include <cstdint>
 #include <functional>
 #include <memory>
@@ -31,8 +32,10 @@ namespace lss
         private:
             // 时间间隔
             int64_t interval_{0};
+
             // 执行任务的时间点（当前时间 + 时间间隔得到）
             int64_t when_{0};
+            
             // 回调函数
             TaskCallback cb_;
         };

@@ -7,6 +7,7 @@ int64_t TTime::NowMS()
 {
     struct timeval tv;
     gettimeofday(&tv, NULL);
+    
     return tv.tv_sec * 1000 + tv.tv_usec / 1000;
 }
 
@@ -15,6 +16,7 @@ int64_t TTime::Now()
 {
     struct timeval tv;
     gettimeofday(&tv, NULL);
+
     return tv.tv_sec;
 }
 
@@ -31,6 +33,7 @@ int64_t TTime::Now(int& year, int& month, int& day, int& hour, int& minute, int&
     hour = tm.tm_hour;
     minute  = tm.tm_min;
     second = tm.tm_sec;
+
     return t;
 }
 
@@ -47,5 +50,6 @@ std::string TTime::ISOTime()
     auto n = sprintf(buf, "%4d-%02d-%02dT%02d:%02d:%02d",
                     tm.tm_year + 1900,
                     tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+
     return std::string(buf,buf+n);
 }
