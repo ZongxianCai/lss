@@ -87,10 +87,9 @@ std::string StringUtils::FileNameExt(const std::string& path)
             // 从 pos + 1 开始到文件名最后
             return path.substr(pos + 1); 
         }
-
-        // 未找到，返回文件路径
-        return path;
     }
+    // 未找到，返回文件路径
+    return path;
 }
 
 // 从完整的文件路径中返回文件名

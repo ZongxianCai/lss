@@ -1,0 +1,44 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/czx/workspace/CppPractice/lss/src/base/NonCopyable.h
+
+/home/czx/workspace/CppPractice/lss/src/base/Singleton.h
+pthread.h
+-
+NonCopyable.h
+/home/czx/workspace/CppPractice/lss/src/base/NonCopyable.h
+
+/home/czx/workspace/CppPractice/lss/src/base/StringUtils.cpp
+StringUtils.h
+/home/czx/workspace/CppPractice/lss/src/base/StringUtils.h
+
+/home/czx/workspace/CppPractice/lss/src/base/StringUtils.h
+vector
+-
+string
+-
+
+/home/czx/workspace/CppPractice/lss/src/base/TTime.cpp
+TTime.h
+/home/czx/workspace/CppPractice/lss/src/base/TTime.h
+
+/home/czx/workspace/CppPractice/lss/src/base/TTime.h
+cstdint
+-
+string
+-
+sys/time.h
+-
+
+/home/czx/workspace/CppPractice/lss/src/base/TestSingleton.cpp
+iostream
+-
+Singleton.h
+/home/czx/workspace/CppPractice/lss/src/base/Singleton.h
+

@@ -1,0 +1,2 @@
+/usr/bin/ar cr libbase.a  CMakeFiles/base.dir/StringUtils.cpp.o CMakeFiles/base.dir/TTime.cpp.o CMakeFiles/base.dir/TestSingleton.cpp.o
+/usr/bin/ranlib libbase.a

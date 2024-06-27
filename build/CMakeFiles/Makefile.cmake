@@ -12,6 +12,7 @@ SET(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/2.8.12.2/CMakeCXXCompiler.cmake"
   "CMakeFiles/2.8.12.2/CMakeSystem.cmake"
   "../src/CMakeLists.txt"
+  "../src/base/CMakeLists.txt"
   "../src/main/CMakeLists.txt"
   "/usr/share/cmake/Modules/CMakeCCompiler.cmake.in"
   "/usr/share/cmake/Modules/CMakeCCompilerABI.c"
@@ -62,10 +63,13 @@ SET(CMAKE_MAKEFILE_PRODUCTS
   "CMakeFiles/2.8.12.2/CMakeCXXCompiler.cmake"
   "CMakeFiles/CMakeDirectoryInformation.cmake"
   "src/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "src/base/CMakeFiles/CMakeDirectoryInformation.cmake"
   "src/main/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
 SET(CMAKE_DEPEND_INFO_FILES
+  "src/base/CMakeFiles/base.dir/DependInfo.cmake"
+  "src/base/CMakeFiles/base_test.dir/DependInfo.cmake"
   "src/main/CMakeFiles/lss.dir/DependInfo.cmake"
   )
