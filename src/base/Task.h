@@ -28,6 +28,12 @@ namespace lss
 
             // 重启任务的方法
             void Restart();
+
+            // 获取当前的时间点
+            int64_t When() const
+            {
+                return when_;
+            }
         
         private:
             // 时间间隔
