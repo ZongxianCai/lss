@@ -41,6 +41,7 @@ void TestTask()
     taskManager->Add(task4);
 }
 
+/*
 int main(int argc, const char **argv)
 {
     TestTask();
@@ -52,3 +53,4 @@ int main(int argc, const char **argv)
     }
     return 0;
 }
+*/
