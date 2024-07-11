@@ -133,6 +133,7 @@ void FileManager::RotateDays(const FileLogPtr &file)
         oss << path
             << file_name
             << buff
+            << "."
             << file_ext;
         
         file->Rotate(oss.str());
@@ -158,6 +159,7 @@ void FileManager::RotateHours(const FileLogPtr &file)
         oss << path
             << file_name
             << buff
+            << "."
             << file_ext;
 
         file->Rotate(oss.str());
@@ -183,6 +185,7 @@ void FileManager::RotateMinutes(const FileLogPtr &file)
         oss << path
             << file_name
             << buff
+            << "."
             << file_ext;
 
         file->Rotate(oss.str());
