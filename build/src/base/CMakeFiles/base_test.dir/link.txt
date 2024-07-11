@@ -1,1 +1,0 @@
-/usr/bin/c++    -std=c++11 -O0 -g -pipe -Wall -Werror -Wno-unused-variable -lrt -pthread -fno-strict-aliasing -Wno-error=shadow -Wno-sign-compare -g    CMakeFiles/base_test.dir/StringUtils.cpp.o CMakeFiles/base_test.dir/TTime.cpp.o CMakeFiles/base_test.dir/TestSingleton.cpp.o  -o base_test -rdynamic 

@@ -1,3 +1,0 @@
-/home/czx/workspace/CppPractice/lss/build/src/base/CMakeFiles/base.dir
-/home/czx/workspace/CppPractice/lss/build/src/base/CMakeFiles/base_test.dir
-/home/czx/workspace/CppPractice/lss/build/src/main/CMakeFiles/lss.dir
