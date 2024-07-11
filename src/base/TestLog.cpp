@@ -12,6 +12,7 @@ void TestLog()
     LOG_ERROR << " Test Error !!! ";
 }
 
+/*
 int main(int argc, const char **argv)
 {
     lss::base::g_logger = new Logger();
@@ -22,3 +23,4 @@ int main(int argc, const char **argv)
 
     return 0;
 }
+*/
