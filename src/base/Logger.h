@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include "NonCopyable.h"
+#include "FileLog.h"
 
 namespace lss
 {
@@ -23,8 +24,8 @@ namespace lss
         class Logger : public NonCopyable
         {
         public:
-            // 默认构造函数
-            Logger() = default;
+            // 构造函数，接收一个 FileLogPtr 类型的参数，将其用于初始化成员变量 log_
+            Logger(const FileLogPtr &log);
 
             // 默认析构函数
             ~Logger() = default;
@@ -41,6 +42,10 @@ namespace lss
         private:
             // 存储当前日志级别，默认值为 kDebug
             LogLevel level_{kDebug};
+
+            // 声明一个名为 log_ 的成员变量，类型为 FileLogPtr 
+            // log_ 可以持有一个 FileLog 对象的引用，并自动管理该对象的生命周期
+            FileLogPtr log_;
         };
     }
 }
