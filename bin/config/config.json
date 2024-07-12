@@ -1,0 +1,11 @@
+{
+    "name": "lss server",
+    "cpu_start": 0,
+    "threads": 4,
+    "log": 
+    {
+        "level": "DEBUG",
+        "name": "lss.log",
+        "path": "../log/"
+    }
+}
