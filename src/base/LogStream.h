@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include <sstream>
 #include <string.h>
 #include <unistd.h>
@@ -41,15 +42,15 @@ namespace lss
 }
 
 #define LOG_TRACE   \
-    if (lss::base::g_logger->GetLogLevel() <= lss::base::kTrace)    \
+    if (g_logger && lss::base::g_logger->GetLogLevel() <= lss::base::kTrace)    \
         lss::base::LogStream(lss::base::g_logger, __FILE__, __LINE__, lss::base::kTrace, __func__)
 
 #define LOG_DEBUG   \
-    if (lss::base::g_logger->GetLogLevel() <= lss::base::kDebug)    \
+    if (g_logger && lss::base::g_logger->GetLogLevel() <= lss::base::kDebug)    \
         lss::base::LogStream(lss::base::g_logger, __FILE__, __LINE__, lss::base::kDebug, __func__)
 
 #define LOG_INFO    \
-    if (lss::base::g_logger->GetLogLevel() <= lss::base::kInfo)     \
+    if (g_logger && lss::base::g_logger->GetLogLevel() <= lss::base::kInfo)     \
         lss::base::LogStream(lss::base::g_logger, __FILE__, __LINE__, lss::base::kInfo)
 
 #define LOG_WARNING     \

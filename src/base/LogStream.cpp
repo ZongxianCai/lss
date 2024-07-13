@@ -58,5 +58,13 @@ LogStream::LogStream(Logger *logger, const char *file, int line, LogLevel l, con
 LogStream::~LogStream()
 {
     stream_ << "\n";
-    logger_->Write(stream_.str());
+
+    if (logger_)
+    {
+        logger_->Write(stream_.str());
+    }
+    else
+    {
+        std::cout << stream_.str() << std::endl;
+    }
 }
