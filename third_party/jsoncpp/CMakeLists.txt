@@ -147,7 +147,7 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         add_compile_options(-Werror=conversion)
     endif()
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
-    # using Intel compiler
+    # using Intel compiler
     add_compile_options(-Wall -Wconversion -Wshadow -Wextra -Werror=conversion)
 
     if(JSONCPP_WITH_STRICT_ISO AND NOT JSONCPP_WITH_WARNING_AS_ERROR)
