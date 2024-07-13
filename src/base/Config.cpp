@@ -74,7 +74,7 @@ bool Config::ParseLogInfo(const Json::Value &root)
         else if (level == "ERROR")
         {
             log_info_->level = kError;
-        }
+        }                              
     }
 
     Json::Value pathObj = root["path"];
@@ -100,10 +100,10 @@ bool Config::ParseLogInfo(const Json::Value &root)
         else if (rt == "HOUR")
         {
             log_info_->rotate_type = kRotateHour;
-        }
+        }                         
     }
 
-    return true;
+    return true;      
 }
 
 // 实现获取日志信息
@@ -115,7 +115,7 @@ LogInfoPtr &Config::GetLogInfo()
 // 加载配置，调用 Config 类中的方法实现
 bool ConfigManager::LoadConfig(const std::string &file)
 {
-    LOG_DEBUG << "Log config file: " << file;
+    LOG_DEBUG << "Load config file: " << file;
 
     ConfigPtr config = std::make_shared<Config>();
     if (config->LoadConfig(file))
