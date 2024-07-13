@@ -9,12 +9,13 @@ using namespace lss::base;
 
 int main(int argc, const char** argv)
 {
-    // printf("hello world !\n");
+   // printf("hello world !\n");
+
 
     // 加载配置文件
     if (!configManager->LoadConfig("../config/config.json"))
     {
-        std::cerr << "Load config file failed. " << std::endl;
+        std::cerr << "Load config file failed." << std::endl;
         
         return -1;
     }
@@ -53,6 +54,6 @@ int main(int argc, const char** argv)
         taskManager->OnWork();
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
-    
+
     return 0;
 }
