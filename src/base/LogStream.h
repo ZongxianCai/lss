@@ -54,7 +54,7 @@ namespace lss
         lss::base::LogStream(lss::base::g_logger, __FILE__, __LINE__, lss::base::kInfo)
 
 #define LOG_WARNING     \
-    if (lss::base::g_logger->GetLogLevel() <= lss::base::kWarning)     \
+    if (g_logger && lss::base::g_logger->GetLogLevel() <= lss::base::kWarning)     \
         lss::base::LogStream(lss::base::g_logger, __FILE__, __LINE__, lss::base::kWarning)
 
 #define LOG_ERROR   \
