@@ -198,6 +198,8 @@ bool EventLoop::EnableEventWriting(const EventPtr &event, bool enable)
     ev.data.fd = event->fd_;
     // 使用 epoll_ctl 函数修改 epoll 中的事件，更新为新的事件设置
     epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, event->fd_, &ev);
+
+    return true;
 }
 
 // 根据传入的参数启用或禁用特定事件的读取功能，并更新 epoll 事件
@@ -228,4 +230,6 @@ bool EventLoop::EnableEventReading(const EventPtr &event, bool enable)
     ev.data.fd = event->fd_;
     // 调用 epoll_ctl 函数，使用 EPOLL_CTL_MOD 操作来修改指定文件描述符的事件
     epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, event->fd_, &ev);
+
+    return true;
 }
