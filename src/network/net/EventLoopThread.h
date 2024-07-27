@@ -19,7 +19,7 @@ namespace lss
 
             void Run();
 
-            EventLoop *loop() const;
+            EventLoop *Loop() const;
 
         private:
             void StartEventLoop();

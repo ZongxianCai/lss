@@ -36,7 +36,7 @@ void EventLoopThread::Run()
     });
 }
 
-EventLoop *EventLoopThread::loop() const
+EventLoop *EventLoopThread::Loop() const
 {
     return loop_;
 }
