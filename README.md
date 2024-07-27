@@ -41,13 +41,17 @@ lss/
             |-- net/ 网络协议
                 |-- tests/ 测试目录
                     |-- CMakeLists.txt 编译可执行文件并设置路径
-                    |-- EventLoopThreadTest.cpp 测试EventLoopThread
+                    |-- EventLoopThreadTest.cpp 测试事件循环线程的功能
                 |-- EventLoop.h
                 |-- EventLoop.cpp 实现事件循环的逻辑，用于处理网络事件
                 |-- Event.h
                 |-- Event.cpp 处理与事件循环相关的事件
                 |-- EventLoopThread.h
-                |-- EventLoopThread.cpp
+                |-- EventLoopThread.cpp 创建一个在单独线程中运行的事件循环
+                |-- PipeEvent.h
+                |-- PipeEvent.cpp 处理与管道有关的事件
+                |-- EventLoopThreadPool.h
+                |-- EventLoopThreadPool.cpp 设计线程池处理事件
             |-- CMakeLists.txt 指定编译的文件目录
         |-- main/
             |-- CMakeLists.txt 指定编译所需的依赖文件
@@ -200,3 +204,12 @@ C++的`三/五法则`：拷贝构造函数、拷贝赋值运算符、析构函�
 >   - EventLoopThread通过创建一个std::thread线程来运行EventLoop；
 >   - EventLoopThread只运行一个EventLoop；
 >   - EventLoopThread保证EventLoop的生命周期与std::thread相同。
+> - 线程池：
+>   - 利用多个CPU或者多个核，提高并发能力，提高服务器性能；
+>   - 统一管理线程，有利于利用CPU性能；
+>   - 线程池预先创建好线程，减少启动时间；
+>   - 线程池最终对外提供EventLoop来使用线程池的并发能力。
+> - **EventLoopThreadPool**的设计：
+>   - 绑定CPU：std::thread运行的CPU不确定；
+>   - 使用Linux提供的接口pthread_setaffinity_np将线程绑定到指定的CPU上；
+>   - 配置起始CPU和线程数量；
