@@ -24,8 +24,8 @@ namespace lss
             // 声明友元类 EventLoop，允许在 Event 类中访问私有成员变量 loop_
             friend class EventLoop;
         public:
-            // 默认构造函数，用于初始化 Event 类的实例
-            Event();
+            // 默认构造函数，接收一个指向 EventLoop 的指针
+            Event(EventLoop *loop);
 
             // 带参构造函数，接收一个指向 EventLoop 的指针和一个文件描述符 fd ，用于初始化 Event 类的实例
             Event(EventLoop *loop, int fd);
@@ -54,7 +54,7 @@ namespace lss
             // 声明一个公共成员函数 Fd ，返回当前事件的文件描述符，使用 const 修饰符表示该函数不会修改类的状态
             int Fd() const;
 
-        private:
+        protected:
             // 声明一个指向 EventLoop 的私有成员变量 loop_，并初始化为 nullptr，表示未指向任何有效的 EventLoop 实例
             EventLoop *loop_{nullptr};
 

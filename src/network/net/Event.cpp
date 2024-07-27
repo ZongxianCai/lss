@@ -4,8 +4,9 @@
 
 using namespace lss::network;
 
-// 定义 Event 类的默认构造函数
-Event::Event()
+// 定义 Event 类的构造函数，接收一个指向 EventLoop 的指针
+Event::Event(EventLoop *loop)
+:loop_(loop)
 {
     // 主体为空，不执行任何操作
 }
