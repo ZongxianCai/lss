@@ -52,6 +52,8 @@ lss/
                 |-- PipeEvent.cpp 处理与管道有关的事件
                 |-- EventLoopThreadPool.h
                 |-- EventLoopThreadPool.cpp 事件循环线程池处理事件
+                |-- TimingWheel.h
+                |-- TimingWheel.cpp 以时间轮的方式设置定时任务
             |-- CMakeLists.txt 指定编译的文件目录
         |-- main/
             |-- CMakeLists.txt 指定编译所需的依赖文件
@@ -213,3 +215,13 @@ C++的`三/五法则`：拷贝构造函数、拷贝赋值运算符、析构函�
 >   - 绑定CPU：std::thread运行的CPU不确定；
 >   - 使用Linux提供的接口pthread_setaffinity_np将线程绑定到指定的CPU上；
 >   - 配置起始CPU和线程数量；
+> - 任务队列：
+>   - EventLoop提供执行任务的功能；
+>   - EventLoop执行一个任务，有两种情况：
+>       - 1.调用方所在线程和EventLoop所在线程是同一个线程，则直接执行；
+>       - 2.调用方所在线程和EventLoop所在线程不是同一个线程，任务入队，由Loop执行。
+>   - 任务队列需要加锁。
+> - **TimingWheel**定时任务：
+>   - 每个EventLoop都有一个TimingWheel，定时任务只在自己的EventLoop内循环；
+>   - TimingWheel固定一秒转一次；
+>   - 定时任务提供天、小时、分钟、秒4种单位的时间刻度。
