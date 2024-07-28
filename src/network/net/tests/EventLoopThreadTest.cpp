@@ -2,6 +2,7 @@
 #include <thread>
 #include "network/net/EventLoop.h"
 #include "network/net/EventLoopThread.h"
+#include "network/net/EventLoopThreadPool.h"
 #include "network/net/PipeEvent.h"
 #include "base/TTime.h"
 
@@ -50,9 +51,29 @@ void TestEventLoopThread()
     }
 }
 
+void TestEventLoopThreadPool()
+{
+    EventLoopThreadPool pool(2, 0, 2);
+    
+    pool.Start();
+
+    std::vector<EventLoop *> list = pool.GetLoops();
+    for (auto &e : list)
+    {
+        std::cout << "loop : " << e << std::endl;
+    }
+
+    EventLoop *loop = pool.GetNextLoop();
+    std::cout << "loop : "  << loop << std::endl;
+
+    loop = pool.GetNextLoop();
+    std::cout << "loop : "  << loop << std::endl;
+}
+
 int main(int argc, const char **argv)
 {
-    TestEventLoopThread();
+    // TestEventLoopThread();
+    TestEventLoopThreadPool();
 
     return 0;
 }
