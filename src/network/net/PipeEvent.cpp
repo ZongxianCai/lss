@@ -33,7 +33,7 @@ PipeEvent::~PipeEvent()
     // 写入端的文件描述符大于 0 时，关闭写入端的文件描述符
     if (write_fd_ > 0)
     {
-        close(write_fd_);
+        ::close(write_fd_);
         // 将write_fd_的值设置为-1，表示文件描述符已关闭
         write_fd_ = -1;
     }
