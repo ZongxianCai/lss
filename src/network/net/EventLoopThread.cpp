@@ -72,3 +72,9 @@ void EventLoopThread::StartEventLoop()
     // 事件循环结束，设置为 nullptr 
     loop_ = nullptr;
 }
+
+// 获取与线程相关的信息或对象，调用该函数将获得一个现有线程对象的引用，而不是一个新的线程对象
+std::thread &EventLoopThread::Thread()
+{
+    return thread_;
+}

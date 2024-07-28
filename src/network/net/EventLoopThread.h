@@ -25,6 +25,9 @@ namespace lss
             // 返回当前事件循环的指针
             EventLoop *Loop() const;
 
+            // 获取与线程相关的信息或对象
+            std::thread &Thread();
+
         private:
             // 启动事件循环
             void StartEventLoop();
