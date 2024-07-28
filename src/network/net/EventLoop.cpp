@@ -4,10 +4,11 @@
 #include <unistd.h>
 #include "EventLoop.h"
 #include "network/base/Network.h"
+#include "base/TTime.h"
 
 using namespace lss::network; 
 
-//  定义一个线程局部变量，用于存储当前线程的事件循环实例指针
+//  定义一个静态线程局部变量，用于存储当前线程的事件循环实例指针
 static thread_local EventLoop *t_local_event_loop = nullptr;
 
 // 构造函数，初始化事件循环
@@ -37,6 +38,9 @@ void EventLoop::Loop()
 {
     // 初始化循环状态
     looping_ = true;
+
+    // 超时时间 (ms)
+    int64_t timeout = 1000;
     
     // 进入主循环
     while (looping_)
@@ -44,11 +48,11 @@ void EventLoop::Loop()
         // 清空事件数组，准备接收新的事件
         memset(&epoll_events_[0], 0x00, sizeof(struct epoll_event)*epoll_events_.size());
 
-        // 调用 epoll_wait 函数，等待事件发生，直到有事件到达时进行阻塞
-        auto ret = ::epoll_wait(epoll_fd_, (struct epoll_event*)&epoll_events_[0], static_cast<int>(epoll_events_.size()), -1);
+        // 调用 epoll_wait 函数，等待事件发生，直到有事件到达时进行阻塞，否则超时退出
+        auto ret = ::epoll_wait(epoll_fd_, (struct epoll_event*)&epoll_events_[0], static_cast<int>(epoll_events_.size()), timeout);
 
         // 如果事件数大于 0 ，则进行处理
-        if (ret > 0)
+        if (ret >= 0)
         {
             // 遍历所有返回的事件
             for (int i = 0; i < ret; i++)
@@ -101,10 +105,11 @@ void EventLoop::Loop()
             {
                 epoll_events_.resize(epoll_events_.size() * 2);
             }
-        }
-        else if (ret == 0)
-        {
 
+            RunFunctions();
+
+            int64_t now = lss::base::TTime::NowMS();
+            wheel_.OnTimer(now);
         }
         else if (ret < 0)
         {
@@ -225,6 +230,8 @@ bool EventLoop::EnableEventReading(const EventPtr &event, bool enable)
     }
 
     struct epoll_event ev;
+    // memset 函数将 ev 的内存块的每个字节都设置为 0，以确保结构体中的所有字段都被初始化为 0 值
+    // 这种清零操作可以确保 ev 结构体的所有字段都被初始化为 0，以避免出现未定义的行为或错误的结果
     memset(&ev, 0x00, sizeof(struct epoll_event));
     ev.events = event->event_;
     ev.data.fd = event->fd_;
@@ -232,4 +239,181 @@ bool EventLoop::EnableEventReading(const EventPtr &event, bool enable)
     epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, event->fd_, &ev);
 
     return true;
+}
+
+// 在事件循环中的某个函数被调用时，检查当前线程是否是事件循环所在的线程
+void EventLoop::AssertInLoopThread()
+{
+    if (IsInLoopThread())
+    {
+        NETWORK_ERROR << " It is forbidden to run loop on other threads ! ";
+        // 返回一个非零值表示程序异常终止
+        exit(-1);
+    }
+}
+
+// 检查当前线程是否是事件循环所在的线程
+bool EventLoop::IsInLoopThread() const
+{
+    return t_local_event_loop == this;
+}
+
+// 确保函数在事件循环中按顺序执行，并且能够在不同线程间进行线程安全的调用
+void EventLoop::RunInLoop(const Func &func)
+{
+    if (IsInLoopThread())
+    {
+        // 直接调用传入的函数 func
+        func();
+    }
+    else    // 如果当前线程与事件循环所在的线程不同
+    {
+        // 创建对象 lk 保护互斥锁 lock_ ，以确保线程安全
+        std::lock_guard<std::mutex> lk(lock_);
+        // 将传入的函数 func 添加到 functions_ 队列中，以便在事件循环中执行
+        functions_.push(func);
+
+        // 唤醒事件循环，使其及时处理新的函数任务
+        WakeUp();
+    }
+}
+
+// 使用右值引用，为了实现高效的函数传递和移动语义
+/*
+* 右值引用是C++11引入的特性，允许将一个临时对象或将要销毁的对象的所有权转移给另一个对象，而不需要进行深拷贝
+* 通过使用右值引用，可以避免不必要的对象拷贝和内存分配，提高代码的性能和效率
+*/ 
+void EventLoop::RunInLoop(Func &&func)
+{
+    if (IsInLoopThread())
+    {
+        func();
+    }
+    else     // 如果当前线程与事件循环所在的线程不同，传入的函数 func 是一个右值引用
+    {
+        std::lock_guard<std::mutex> lk(lock_);
+        // 将传入的函数 func 使用 std::move() 将所有权转移给队列 functions_ ，不需要进行额外的拷贝操作
+        // 避免不必要的内存分配和拷贝开销，提高代码的执行效率
+        functions_.push(std::move(func));
+
+        WakeUp();
+    }
+}
+
+// 将延迟和回调函数的智能指针插入到事件循环的时间轮中
+void EventLoop::InsertEntry(uint32_t delay, EntryPtr entryPtr)
+{
+    if (IsInLoopThread()) // 如果当前线程是事件循环所在的线程，则直接插入
+    {
+        wheel_.InsertEntry(delay, entryPtr);
+    }
+    else                  // 如果不是，则通过将插入操作推迟到事件循环所在的线程中执行
+    {
+        RunInLoop([this, delay, entryPtr]() {
+            wheel_.InsertEntry(delay, entryPtr);
+        });
+    }
+}
+
+// 用于在指定的延迟时间后执行回调函数
+void EventLoop::RunAfter(double delay, const Func &cb)
+{
+    if (IsInLoopThread())
+    {
+        // 如果当前线程是事件循环所在的线程
+        // 直接调用时间轮的RunAfter函数，并传入延迟时间和回调函数
+        wheel_.RunAfter(delay, cb);
+    }
+    else
+    {
+        // 如果当前线程不是事件循环所在的线程
+        // 通过调用RunInLoop函数将插入操作推迟到事件循环所在的线程中执行
+        RunInLoop([this, delay, cb]() {
+            // 使用lambda表达式延迟执行插入操作
+            // lambda表达式捕获了当前对象的指针（this）、延迟时间和回调函数
+            // 在lambda表达式中，调用时间轮的RunAfter函数，并传入延迟时间和回调函数
+            wheel_.RunAfter(delay, cb);
+        });
+    }
+}
+
+void EventLoop::RunAfter(double delay, Func &&cb)
+{
+    if (IsInLoopThread())
+    {
+        wheel_.RunAfter(delay, cb);
+    }
+    else
+    {
+        RunInLoop([this, delay, cb]() {
+            wheel_.RunAfter(delay, cb);
+        });
+    }
+}
+
+// 以指定的时间间隔重复执行回调函数
+void EventLoop::RunEvery(double interval, const Func &cb)
+{
+    if (IsInLoopThread())
+    {
+        // 如果当前线程与事件循环线程相同，直接调用 wheel_ 对象的 RunEvery 函数，传入指定的时间间隔和回调函数
+        wheel_.RunEvery(interval, cb);
+    }
+    else
+    {
+        // 如果当前线程与事件循环线程不同，使用 RunInLoop 函数将插入操作的执行延迟到事件循环线程中
+        // 在传递给 RunInLoop 函数的 lambda 表达式中，捕获了当前对象的指针（this）、时间间隔和回调函数
+        RunInLoop([this, interval, cb]() {
+            // 调用 wheel_ 对象的 RunEvery 函数，传入指定的时间间隔和回调函数
+            wheel_.RunEvery(interval, cb);
+        });
+    }
+}
+
+void EventLoop::RunEvery(double interval, Func &&cb)
+{
+    if (IsInLoopThread())
+    {
+        wheel_.RunEvery(interval, cb);
+    }
+    else
+    {
+        RunInLoop([this, interval, cb]() {
+            wheel_.RunEvery(interval, cb);
+        });
+    }
+}
+
+// 在事件循环中执行存储在队列中的函数任务
+// 通过使用互斥锁 lock_ 和循环语句，可以确保函数任务按顺序执行，并且能够在多线程环境下进行线程安全的调用
+void EventLoop::RunFunctions()
+{
+    // 使用 std::lock_guard，确保在函数执行过程中对互斥锁进行加锁和解锁操作，以保证线程安全
+    std::lock_guard<std::mutex> lk(lock_);
+    while (!functions_.empty())
+    {
+        // 获取队列中的第一个函数
+        auto &func = functions_.front();
+        // 调用该函数
+        func();
+        // 将已经执行过的函数任务从队列中移除
+        functions_.pop();
+    }
+}
+
+// 唤醒事件循环
+void EventLoop::WakeUp()
+{
+    // 检查 pipe_event_ 是否为空
+    if (!pipe_event_)
+    {
+        // 如果为空，则通过 std::make_shared 创建一个 PipeEvent 对象，并将其赋值给 pipe_event_
+        pipe_event_ = std::make_shared<PipeEvent>(this);
+        // 调用 AddEvent(pipe_event_) 将 pipe_event_ 添加到事件循环中
+        AddEvent(pipe_event_);
+    }
+
+    // 将 1 字节写入管道，唤醒正在等待事件的线程，使其能够继续执行
+    int64_t tmp = 1;
+    pipe_event_->Write((const char *)&tmp, sizeof(tmp));
 }
