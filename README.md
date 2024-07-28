@@ -51,7 +51,7 @@ lss/
                 |-- PipeEvent.h
                 |-- PipeEvent.cpp 处理与管道有关的事件
                 |-- EventLoopThreadPool.h
-                |-- EventLoopThreadPool.cpp 设计线程池处理事件
+                |-- EventLoopThreadPool.cpp 事件循环线程池处理事件
             |-- CMakeLists.txt 指定编译的文件目录
         |-- main/
             |-- CMakeLists.txt 指定编译所需的依赖文件
