@@ -38,10 +38,13 @@ lss/
         |-- network/ 高性能网络库的实现
             |-- base/ 基础功能
                 |-- Network.h 定义日志信息
+                |-- InetAddress.h
+                |-- InetAddress.cpp 网络地址相关操作
             |-- net/ 网络协议
                 |-- tests/ 测试目录
                     |-- CMakeLists.txt 编译可执行文件并设置路径
                     |-- EventLoopThreadTest.cpp 测试事件循环线程的功能
+                    |-- InetAddressTest.cpp 测试网络地址相关的操作
                 |-- EventLoop.h
                 |-- EventLoop.cpp 实现事件循环的逻辑，用于处理网络事件
                 |-- Event.h
@@ -214,7 +217,7 @@ C++的`三/五法则`：拷贝构造函数、拷贝赋值运算符、析构函�
 > - **EventLoopThreadPool**的设计：
 >   - 绑定CPU：std::thread运行的CPU不确定；
 >   - 使用Linux提供的接口pthread_setaffinity_np将线程绑定到指定的CPU上；
->   - 配置起始CPU和线程数量；
+>   - 配置起始CPU和线程数量。
 > - 任务队列：
 >   - EventLoop提供执行任务的功能；
 >   - EventLoop执行一个任务，有两种情况：
@@ -225,3 +228,8 @@ C++的`三/五法则`：拷贝构造函数、拷贝赋值运算符、析构函�
 >   - 每个EventLoop都有一个TimingWheel，定时任务只在自己的EventLoop内循环；
 >   - TimingWheel固定一秒转一次；
 >   - 定时任务提供天、小时、分钟、秒4种单位的时间刻度。
+> - 网络地址类：
+>   - 网络编程经常需要用到IP和端口，传递两个值比较麻烦；
+>   - IP和端口经常需要转换成其他形式；
+>   - 有时候需要对地址进行分类检测；
+>   - InetAddress类方便存储IP和端口信息，提供地址相关的操作。
