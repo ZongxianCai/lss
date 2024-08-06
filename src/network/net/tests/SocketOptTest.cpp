@@ -14,15 +14,15 @@ void TestClient()
         return;
     }
 
-    InetAddress server("182.92.65.38:34444");
+    InetAddress server("192.168.56.101:34444");
     SocketOpt opt(sock);
     opt.SetNonBlocking(false);
     auto ret = opt.Connect(server);
 
     std::cout << "Connect ret : " << ret << std::endl
-            << " errno : " << errno << std::endl
-            << " local : " << opt.GetLocalAddr()->ToIpPort() << std::endl
-            << " peer : " << opt.GetPeerAddr()->ToIpPort() << std::endl;
+            << "errno : " << errno << std::endl
+            << "local : " << opt.GetLocalAddr()->ToIpPort() << std::endl
+            << "peer : " << opt.GetPeerAddr()->ToIpPort() << std::endl;
 }
 
 void TestServer()
@@ -44,8 +44,8 @@ void TestServer()
     auto ns = opt.Accept(&addr);
 
     std::cout << "Accept ret : " << ns << std::endl
-            << " errno : " << errno << std::endl
-            << " addr : " << addr.ToIpPort() << std::endl;
+            << "errno : " << errno << std::endl
+            << "addr : " << addr.ToIpPort() << std::endl;
 }
 
 int main(int argc, const char **argv)
