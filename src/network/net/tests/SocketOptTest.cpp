@@ -38,7 +38,7 @@ void TestServer()
     InetAddress server("0.0.0.0:34444");
     SocketOpt opt(sock);
     opt.SetNonBlocking(false);
-    auto ret = opt.Connect(server);
+    opt.BindAddress(server);
     opt.Listen();
     InetAddress addr;
     auto ns = opt.Accept(&addr);
