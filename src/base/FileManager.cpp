@@ -119,7 +119,7 @@ void FileManager::RotateDays(const FileLogPtr &file)
 {
     if (file->FileSize() > 0)
     {
-        char buff[128] = {0};
+        char buff[128] = {0,};
 
         sprintf(buff, "_%04d-%02d-%02d", last_year_, last_month_, last_day_);
 
@@ -145,7 +145,7 @@ void FileManager::RotateHours(const FileLogPtr &file)
 {
     if (file->FileSize() > 0)
     {
-        char buff[128] = {0};
+        char buff[128] = {0,};
 
         sprintf(buff, "_%04d-%02d-%02dT%02d", last_year_, last_month_, last_day_, last_hour_);
 
@@ -171,7 +171,7 @@ void FileManager::RotateMinutes(const FileLogPtr &file)
 {
     if (file->FileSize() > 0)
     {
-        char buff[128] = {0};
+        char buff[128] = {0,};
 
         sprintf(buff, "_%04d-%02d-%02dT%02d:%02d", last_year_, last_month_, last_day_, last_hour_, last_minute_);
 
