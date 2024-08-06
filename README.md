@@ -47,6 +47,7 @@ lss/
                     |-- CMakeLists.txt 编译可执行文件并设置路径
                     |-- EventLoopThreadTest.cpp 测试事件循环线程的功能
                     |-- InetAddressTest.cpp 测试网络地址相关的操作
+                    |-- SocketOptTest.cpp 测试Socket通信
                 |-- EventLoop.h
                 |-- EventLoop.cpp 实现事件循环的逻辑，用于处理网络事件
                 |-- Event.h
