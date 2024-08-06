@@ -40,6 +40,8 @@ lss/
                 |-- Network.h 定义日志信息
                 |-- InetAddress.h
                 |-- InetAddress.cpp 网络地址相关操作
+                |-- SocketOpt.h
+                |-- SocketOpt.cpp Socket相关操作
             |-- net/ 网络协议
                 |-- tests/ 测试目录
                     |-- CMakeLists.txt 编译可执行文件并设置路径
