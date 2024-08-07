@@ -60,6 +60,8 @@ lss/
                 |-- EventLoopThreadPool.cpp 事件循环线程池处理事件
                 |-- TimingWheel.h
                 |-- TimingWheel.cpp 以时间轮的方式设置定时任务
+                |-- Acceptor.h
+                |-- Acceptor.cpp 接收连接相关的操作
             |-- CMakeLists.txt 指定编译的文件目录
         |-- main/
             |-- CMakeLists.txt 指定编译所需的依赖文件
@@ -236,3 +238,13 @@ C++的`三/五法则`：拷贝构造函数、拷贝赋值运算符、析构函�
 >   - IP和端口经常需要转换成其他形式；
 >   - 有时候需要对地址进行分类检测；
 >   - InetAddress类方便存储IP和端口信息，提供地址相关的操作。
+> - **Accept**：
+>   - TCP服务器由Accept接收新连接；
+>   - Accept每次从接收队列中取出第一个请求，接收队列中都是完成了三次握手的请求；
+>   - 设置SO_REUSEPORT后，多线程可以同时监听同一个地址和端口。
+> - **非阻塞Accept**：
+>   - 非阻塞的监听sockfd，会马上返回，没有连接就会返回EAGAIN；
+>   - 非阻塞的监听套接字配合epoll使用；
+>   - 有新连接，epoll返回读就绪事件；
+>   - 边缘触发模式下，一次读事件要一直读到返回EAGAIN错误为止；
+>   - Acceptor是一个Event的子类，主要处理读事件。
