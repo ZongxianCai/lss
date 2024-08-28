@@ -55,6 +55,9 @@ namespace lss
 
             // 声明一个公共成员函数 Fd ，返回当前事件的文件描述符，使用 const 修饰符表示该函数不会修改类的状态
             int Fd() const;
+            
+            // 声明一个关闭函数 Close ，用于处理未执行到析构函数时需要进行关闭的操作
+            void Close();
 
         protected:
             // 声明一个指向 EventLoop 的私有成员变量 loop_，并初始化为 nullptr，表示未指向任何有效的 EventLoop 实例

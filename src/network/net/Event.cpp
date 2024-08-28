@@ -22,12 +22,8 @@ Event::Event(EventLoop *loop, int fd)
 // 定义 Event 类的析构函数
 Event::~Event()
 {
-    // 文件描述符大于 0 ，关闭并恢复初始化值
-    if (fd_ > 0)
-    {
-        ::close(fd_);
-        fd_ = -1;
-    }
+    // 调用关闭函数
+    Close();
 }
 
 // 定义 Event 类的成员函数 EnableWriting，接受一个布尔参数 enable
@@ -48,4 +44,14 @@ bool Event::EnableReading(bool enable)
 int Event::Fd() const
 {
     return fd_;
+}
+
+void Event::Close()
+{
+    // 文件描述符大于 0 ，关闭并恢复初始化值
+    if (fd_ > 0)
+    {
+        ::close(fd_);
+        fd_ = -1;
+    }
 }
