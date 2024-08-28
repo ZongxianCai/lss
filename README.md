@@ -50,6 +50,8 @@ lss/
                     |-- EventLoopThreadTest.cpp 测试事件循环线程的功能
                     |-- InetAddressTest.cpp 测试网络地址相关的操作
                     |-- SocketOptTest.cpp 测试Socket通信
+                    |-- AcceptorTest.cpp 测试Acceptor
+                    |-- TcpConnectionTest.cpp 测试TcpConnection
                 |-- EventLoop.h
                 |-- EventLoop.cpp 实现事件循环的逻辑，用于处理网络事件
                 |-- Event.h
@@ -290,6 +292,11 @@ C++的`三/五法则`：拷贝构造函数、拷贝赋值运算符、析构函�
 >           - 通过getsockopt函数的SO_ERROR选项可以读取错误号；
 >           - 出错的套接字需要回收资源。
 >       - 超时事件：关闭连接，通知上层连接超时。
+>           - 闲置的TcpConnection是一种浪费，需要关闭，释放资源；
+>           - TcpConnection的超时通过定时任务来触发；
+>           - 超时后，直接把TcpConnection关闭，并通知上层业务；
+>           - 只要有数据交互，就延长TcpConnection的生命周期；
+>           - TcpConnection通过增加定时任务智能指针的引用来延长生命周期。
 > - **MsgBuffer**：
 >   - 源文件来源于陈硕的muduo；
 >   - TCP的数据是字节流，读取到的数据，不足一个消息，需要持有不足一个消息的数据；
