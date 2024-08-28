@@ -40,6 +40,9 @@ void TcpConnection::OnClose()
     
     // 将连接状态标记为已关闭
     closed_ = true;
+
+    // 调用基类关闭函数，用于未执行到析构函数但需要在此处进行关闭的操作
+    Event::Close();
 }
 
 void TcpConnection::ForceClose()
@@ -98,7 +101,7 @@ void TcpConnection::OnRead()
             if (err != EINTR && err != EAGAIN && err != EWOULDBLOCK)
             {
                 // 记录读取错误的日志
-                NETWORK_ERROR << " read err : " << err;
+                // NETWORK_ERROR << " read err : " << err;
                 // 调用关闭连接的函数
                 OnClose(); 
             }
@@ -159,7 +162,7 @@ void TcpConnection::OnWrite()
                     if (io_vec_list_.front().iov_len > ret)
                     {
                         // 更新当前数据块的基地址，移动已写入的字节数
-                        io_vec_list_.front().iov_base += ret;
+                        io_vec_list_.front().iov_base = (char*)io_vec_list_.front().iov_base + ret;
                         // 更新当前数据块的长度，减少已写入的字节数
                         io_vec_list_.front().iov_len -= ret;
                         // 退出内层循环
@@ -289,6 +292,20 @@ void TcpConnection::SendInLoop(const char *buff, size_t size)
 
         // 从待发送的字节数中减去已成功发送的字节数
         size -= send_len;
+
+        // 检查 size 是否为 0，通常表示没有数据需要写入
+        if (size == 0)
+        {
+            // 如果 write_complete_cb_（写完成的回调函数）存在，则执行以下操作
+            if (write_complete_cb_)
+            {
+                // 使用 std::dynamic_pointer_cast 将当前对象（通过 shared_from_this() 获取）转换为 TcpConnection 类型的智能指针，并调用回调函数
+                write_complete_cb_(std::dynamic_pointer_cast<TcpConnection>(shared_from_this()));
+            }
+
+            // 结束当前函数的执行
+            return;
+        }
     }
 
     // 如果还有未发送的数据
@@ -297,7 +314,7 @@ void TcpConnection::SendInLoop(const char *buff, size_t size)
         // 创建一个 iovec 结构体
         struct iovec vec;
         // 设置 iov_base 为 buff 的偏移地址，指向未发送的数据
-        vec.iov_base = (void*)buff + send_len;
+        vec.iov_base = (void*)(buff + send_len);
         // 设置 iov_len 为剩余的待发送字节数
         vec.iov_len = size;
         
@@ -336,6 +353,47 @@ void TcpConnection::SendInLoop(std::list<BufferNodePtr>&list)
     if (!io_vec_list_.empty())
     {
         EnableWriting(true);
+    }
+}
+
+void TcpConnection::OnTimeout()
+{
+    NETWORK_ERROR << " host : " << peer_addr_.ToIpPort() << " timeout and close it.";
+    std::cout << "host : " << peer_addr_.ToIpPort() << " timeout and close it." << std::endl;
+    OnClose();
+}
+
+void TcpConnection::EnableCheckIdleTimeout(int32_t max_time)
+{
+    auto tp = std::make_shared<TimeoutEntry>(std::dynamic_pointer_cast<TcpConnection>(shared_from_this()));
+    max_idle_time_ = max_time;
+    timeout_entry_ = tp;
+    loop_->InsertEntry(max_time, tp);
+}
+
+void TcpConnection::SetTimeoutCallback(int timeout, const TimeoutCallback &cb)
+{
+    auto cp = std::dynamic_pointer_cast<TcpConnection>(shared_from_this());
+    loop_->RunAfter(timeout, [&cp, &cb](){
+        cb(cp);
+    });
+}
+
+void TcpConnection::SetTimeoutCallback(int timeout, TimeoutCallback &&cb)
+{
+    auto cp = std::dynamic_pointer_cast<TcpConnection>(shared_from_this());
+    loop_->RunAfter(timeout, [&cp, cb](){
+        cb(cp);
+    });
+}
+
+void TcpConnection::ExtendLife()
+{
+    auto tp = timeout_entry_.lock();
+
+    if (tp)
+    {
+        loop_->InsertEntry(max_idle_time_, tp);
     }
 }
 

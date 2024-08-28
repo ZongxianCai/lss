@@ -27,6 +27,9 @@ namespace lss
         // 定义写入完成的回调函数类型，接受一个 TcpConnectionPtr 参数，用于处理写入完成事件
         using WriteCompleteCallback = std::function<void(const TcpConnectionPtr &)>;
 
+        // 定义超时回调函数类型，接受一个 TcpConnectionPtr 参数，用于处理超时事件
+        using TimeoutCallback = std::function<void(const TcpConnectionPtr &)>;
+
         // 定义一个缓冲区节点
         struct BufferNode
         {
@@ -41,6 +44,9 @@ namespace lss
 
         // 定义一个缓冲区节点 BufferNode 的智能指针，便于管理 BufferNode 的内存
         using BufferNodePtr = std::shared_ptr<BufferNode>;
+
+        // 前置声明，避免循环依赖
+        struct TimeoutEntry;
 
         class TcpConnection : public Connection // 继承自 Connection 类，包含与 TCP 连接相关的功能和数据成员
         {
@@ -87,6 +93,18 @@ namespace lss
             // 发送指定大小的缓冲区数据的函数
             void Send(const char *buff, size_t size);
 
+            // 设置超时时间
+            void OnTimeout();
+
+            // 设置最大空闲时间
+            void EnableCheckIdleTimeout(int32_t max_time);
+
+            // 设置超时回调函数
+            void SetTimeoutCallback(int timeout, const TimeoutCallback &cb);
+
+            // 设置超时回调函数（右值引用）
+            void SetTimeoutCallback(int timeout, TimeoutCallback &&cb);
+
             // 析构函数
             ~TcpConnection();
 
@@ -96,6 +114,9 @@ namespace lss
 
             // 在事件循环中发送数据列表的函数
             void SendInLoop(std::list<BufferNodePtr>&list);
+
+            // 在事件循环中发送指定大小的缓冲区数据的函数
+            void ExtendLife();
 
             // 连接是否关闭的标志
             bool closed_{false};
@@ -114,6 +135,39 @@ namespace lss
 
             // 写入完成时的回调函数
             WriteCompleteCallback write_complete_cb_;
+
+            // 声明了一个指向 TimeoutEntry 对象的弱指针，使用弱指针可以避免循环引用，从而防止内存泄漏
+            // 弱指针不会管理所指向对象的生命周期，因此可以指向由 std::shared_ptr 管理的对象，而不会阻止该对象被销毁
+            std::weak_ptr<TimeoutEntry> timeout_entry_;
+
+            // 连接的最大空闲时间，单位:秒
+            int32_t max_idle_time_{30};
+        };
+
+        // 定义一个超时时间节点
+        struct TimeoutEntry
+        {
+            // 构造函数接受一个 TcpConnectionPtr 类型的常量引用 c（一个智能指针，指向 TcpConnection 对象）
+            TimeoutEntry(const TcpConnectionPtr &c)
+                : conn(c) // 使用初始化列表将 conn 成员初始化为传入的 c
+            {}
+
+            ~TimeoutEntry()
+            {
+                // 尝试将 conn 转换为一个 std::shared_ptr<TcpConnection>，如果 conn 指向的对象仍然存在（即没有被销毁），lock() 方法将返回一个有效的 shared_ptr
+                auto c = conn.lock();
+
+                // 如果 c 是有效的，则调用 c->OnTimeout(); 
+                if (c)
+                {
+                    // 在超时发生时，相关的 TcpConnection 对象将执行其 OnTimeout 方法
+                    c->OnTimeout();
+                }
+            }
+
+            // conn 是一个 std::weak_ptr<TcpConnection> 类型的成员变量，用于存储指向 TcpConnection 对象的弱引用
+            // 使用弱指针可以避免循环引用，从而防止内存泄漏。
+            std::weak_ptr<TcpConnection> conn;
         };
     }
 }
