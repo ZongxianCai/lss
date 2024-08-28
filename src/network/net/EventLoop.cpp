@@ -19,7 +19,7 @@ EventLoop::EventLoop()
     // 检测是否已经存在事件循环实例，若存在，程序退出
     if (t_local_event_loop)
     {
-        NETWORK_ERROR << "There already had an event loop ! ";
+        NETWORK_ERROR << " There already had an event loop ! ";
         exit(-1);
     }
 
@@ -113,7 +113,7 @@ void EventLoop::Loop()
         }
         else if (ret < 0)
         {
-            NETWORK_DEBUG << "epoll_wait error, error : ", errno;
+            NETWORK_DEBUG << " epoll_wait error, error : ", errno;
         }
     }
 }
@@ -182,7 +182,7 @@ bool EventLoop::EnableEventWriting(const EventPtr &event, bool enable)
     // 如果未找到对应的事件，输出错误信息并返回 false
     if (iter == events_.end())
     {
-        NETWORK_ERROR << "Cannot find event fd: " << event->Fd();
+        NETWORK_ERROR << " Cannot find event fd : " << event->Fd();
         
         return false;
     }
@@ -214,7 +214,7 @@ bool EventLoop::EnableEventReading(const EventPtr &event, bool enable)
     // 使用 events_ 容器查找与 event->Fd() 相关的事件，如果找不到对应的事件，输出错误信息并返回 false
     if (iter == events_.end())
     {
-        NETWORK_ERROR << "Cannot find event fd: " << event->Fd();
+        NETWORK_ERROR << " Cannot find event fd : " << event->Fd();
         
         return false;
     }
