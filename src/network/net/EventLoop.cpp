@@ -244,7 +244,7 @@ bool EventLoop::EnableEventReading(const EventPtr &event, bool enable)
 // 在事件循环中的某个函数被调用时，检查当前线程是否是事件循环所在的线程
 void EventLoop::AssertInLoopThread()
 {
-    if (IsInLoopThread())
+    if (!IsInLoopThread())
     {
         NETWORK_ERROR << " It is forbidden to run loop on other threads ! ";
         // 返回一个非零值表示程序异常终止
@@ -280,9 +280,9 @@ void EventLoop::RunInLoop(const Func &func)
 
 // 使用右值引用，为了实现高效的函数传递和移动语义
 /*
-* 右值引用是C++11引入的特性，允许将一个临时对象或将要销毁的对象的所有权转移给另一个对象，而不需要进行深拷贝
-* 通过使用右值引用，可以避免不必要的对象拷贝和内存分配，提高代码的性能和效率
-*/ 
+ * 右值引用是C++11引入的特性，允许将一个临时对象或将要销毁的对象的所有权转移给另一个对象，而不需要进行深拷贝
+ * 通过使用右值引用，可以避免不必要的对象拷贝和内存分配，提高代码的性能和效率
+ */
 void EventLoop::RunInLoop(Func &&func)
 {
     if (IsInLoopThread())
