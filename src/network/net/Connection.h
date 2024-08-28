@@ -99,18 +99,19 @@ namespace lss
             // 虚析构函数，使用默认实现
             virtual ~Connection() = default;
 
+        protected:
+            // 本地地址
+            InetAddress local_addr_;
+
+            // 远端地址
+            InetAddress peer_addr_;
+
         private:
             // 存储上下文的哈希表，键为整数，值为上下文指针
             std::unordered_map<int, ContexPtr> contexts_;
 
             // 激活回调函数
             ActiveCallback active_cb_;
-
-            // 本地地址
-            InetAddress local_addr_;
-
-            // 远端地址
-            InetAddress peer_addr_;
 
             // 表示当前是否处于活动状态的原子布尔值
             std::atomic<bool> active_{false};
