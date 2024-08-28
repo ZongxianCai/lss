@@ -42,6 +42,8 @@ lss/
                 |-- InetAddress.cpp 网络地址相关操作
                 |-- SocketOpt.h
                 |-- SocketOpt.cpp Socket相关操作
+                |-- MsgBuffer.h
+                |-- MsgBuffer.cpp 消息缓冲区相关操作
             |-- net/ 网络协议
                 |-- tests/ 测试目录
                     |-- CMakeLists.txt 编译可执行文件并设置路径
@@ -64,6 +66,8 @@ lss/
                 |-- Acceptor.cpp 接收连接相关的操作
                 |-- Connection.h
                 |-- Connection.cpp 网络连接相关的操作
+                |-- TcpConnection.h
+                |-- TcpConnection.cpp TCP相关操作
             |-- CMakeLists.txt 指定编译的文件目录
         |-- main/
             |-- CMakeLists.txt 指定编译所需的依赖文件
@@ -259,3 +263,35 @@ C++的`三/五法则`：拷贝构造函数、拷贝赋值运算符、析构函�
 >   - Connection可以增加一些连接相关的私有数据；
 >   - Connection存在空闲状态，需要主动去激活Connection；
 >   - Connection是Event的一个子类。
+> - **TcpConnection**的设计：
+>   - TcpConnection代表一个TCP连接，由TCP服务器创建；
+>   - TcpConnection是Connection的子类，也是Event的子类；
+>   - TcpConnection处理套接字的所有IO事件；
+>   - TcpConnection的IO处理函数都需要在EventLoop循环中；
+>   - 处理套接字IO事件：
+>       - 读事件：有数据来，读数据后通过回调通知上层处理数据；
+>           - TcpConnection是面向字节流的连接，字节流本身没有边界；
+>           - TcpConnection的读事件由EventLoop监听，数据由TcpConnection读，并调用回调处理；
+>           - 套接字读事件使用了epoll边缘触发模式，一次触发需要一直读到没有数据为止；
+>           - 使用readv接口，可以减少读IO的调用。
+>       - 写事件：保存要发送的数据，可以发送数据，从队列中取出数据进行发送，直到发送完队列中的数据，通过回调通知上层；
+>           - 业务层会调用TcpConnection的发送接口发送数据，实际的发送由TcpConnection完成；
+>           - TcpConnection把队列中的数据发送完，调用回调通知上层；
+>           - TcpConnection只保存要发送的数据地址和长度，不拷贝数据，并且认为数据的生命周期足够长，直到数据发送完；
+>           - TcpConnection的发送函数可能由其他线程调用，要保证发送事件在TcpConnection所在的EventLoop中；
+>           - 通过writev可以减少写IO的调用。
+>       - 关闭事件：关闭连接，通知上层关闭连接；
+>           - EPOLLHUP表示描述符的一端或两端已经关闭或挂断，或者被其他错误关闭；
+>           - 关闭事件除了关闭描述符外，还需要通知上层业务，告知连接关闭；
+>           - 有可能描述符关闭，但是仍执行任务队列和超时检测，所以需要一个状态位来表示连接已经关闭；
+>           - TcpConnection提供强制关闭连接的接口，由业务层调用。
+>       - 出错事件：打印出出错信息，关闭连接，通知上层关闭连接；
+>           - EPOLLERR表示描述符遇到错误，套接字变成可读；
+>           - 通过getsockopt函数的SO_ERROR选项可以读取错误号；
+>           - 出错的套接字需要回收资源。
+>       - 超时事件：关闭连接，通知上层连接超时。
+> - **MsgBuffer**：
+>   - 源文件来源于陈硕的muduo；
+>   - TCP的数据是字节流，读取到的数据，不足一个消息，需要持有不足一个消息的数据；
+>   - MsgBuffer实现了一个环形缓冲区，先进先出；
+>   - MsgBuffer提供了安全写和便捷读的功能。
