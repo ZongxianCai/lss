@@ -21,6 +21,21 @@ namespace lss
             kFlvContext
         };
 
+        // 定义一个缓冲区节点
+        struct BufferNode
+        {
+            BufferNode(void *buff, size_t s)
+                : addr(buff), size(s)
+            {}
+
+            void *addr{nullptr};        // 指向缓冲区的起始地址
+
+            size_t size{0};             // 缓冲区的大小
+        };
+
+        // 定义一个缓冲区节点 BufferNode 的智能指针，便于管理 BufferNode 的内存
+        using BufferNodePtr = std::shared_ptr<BufferNode>;
+
         // 定义一个类型别名 ContexPtr，表示指向 void 类型的共享指针，通常用于表示不确定类型的上下文
         using ContexPtr = std::shared_ptr<void>;
 
