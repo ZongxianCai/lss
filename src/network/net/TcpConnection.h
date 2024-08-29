@@ -30,21 +30,6 @@ namespace lss
         // 定义超时回调函数类型，接受一个 TcpConnectionPtr 参数，用于处理超时事件
         using TimeoutCallback = std::function<void(const TcpConnectionPtr &)>;
 
-        // 定义一个缓冲区节点
-        struct BufferNode
-        {
-            BufferNode(void *buff, size_t s)
-                : addr(buff), size(s)
-            {}
-
-            void *addr{nullptr};        // 指向缓冲区的起始地址
-
-            size_t size{0};             // 缓冲区的大小
-        };
-
-        // 定义一个缓冲区节点 BufferNode 的智能指针，便于管理 BufferNode 的内存
-        using BufferNodePtr = std::shared_ptr<BufferNode>;
-
         // 前置声明，避免循环依赖
         struct TimeoutEntry;
 
