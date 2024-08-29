@@ -106,7 +106,7 @@ namespace lss
             void SetTimeoutCallback(int timeout, TimeoutCallback &&cb);
 
             // 析构函数
-            ~TcpConnection();
+            virtual ~TcpConnection();
 
         private:
             // 在事件循环中发送数据的函数

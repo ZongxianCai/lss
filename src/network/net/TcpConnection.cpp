@@ -30,6 +30,9 @@ void TcpConnection::OnClose()
     // 如果连接尚未关闭
     if (!closed_)
     {
+        // 将连接状态标记为已关闭（放到此处，避免后续TcpClient超时导致重复进入）
+        closed_ = true;
+
         // 如果存在关闭回调
         if (close_cb_)
         {
@@ -37,9 +40,6 @@ void TcpConnection::OnClose()
             close_cb_(std::dynamic_pointer_cast<TcpConnection>(shared_from_this()));
         }
     }
-    
-    // 将连接状态标记为已关闭
-    closed_ = true;
 
     // 调用基类关闭函数，用于未执行到析构函数但需要在此处进行关闭的操作
     Event::Close();
