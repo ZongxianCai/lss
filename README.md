@@ -73,6 +73,8 @@ lss/
                 |-- Connection.cpp 网络连接相关的操作
                 |-- TcpConnection.h
                 |-- TcpConnection.cpp TCP相关操作
+                |-- UdpSocket.h
+                |-- UdpSocket.h UDP Socket相关操作
             |-- CMakeLists.txt 指定编译的文件目录
             |-- TcpServer.h
             |-- TcpServer.cpp TCP Server相关操作
@@ -319,7 +321,7 @@ C++的`三/五法则`：拷贝构造函数、拷贝赋值运算符、析构函�
 >   - 本地DNS缓存的原因，域名在一定的时间内解析不会更新；
 >   - 同一个域名不必多次请求解析；
 >   - 后台统一解析能减少响应时间；
->   - 域名的更新时间和频率可以通过配置文件设置.
+>   - 域名的更新时间和频率可以通过配置文件设置。
 > - **TcpClient**：
 >   - TcpClient是TcpConnection的一个子类；
 >   - TcpClient主动发起连接，TcpClient和Server之间只存在一个连接；
@@ -332,3 +334,7 @@ C++的`三/五法则`：拷贝构造函数、拷贝赋值运算符、析构函�
 >           - 返回-1，并且错误号为EINPROGRESS，表示连接中；
 >           - 返回-1，错误号不为EINPROGRESS，表示出错。
 >       - 连接中的套接字变成可读可写，如果不是出错，则表示连接成功。
+> - **UdpSocket**：
+>   - UDP面向数据报，报文是有边界的；
+>   - UdpSocket是Connection的一个子类；
+>   - UdpSocket负责处理UDP套接字的IO事件。
