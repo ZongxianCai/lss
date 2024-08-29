@@ -52,7 +52,10 @@ lss/
                     |-- SocketOptTest.cpp 测试Socket通信
                     |-- AcceptorTest.cpp 测试Acceptor
                     |-- TcpConnectionTest.cpp 测试TcpConnection
-                |-- EventLoop.h
+                    |-- TcpServerTest.cpp 测试TcpServer
+                    |-- DnsServiceTest.cpp 测试DnsService
+                    |-- TcpClientTest.cpp 测试TcpClient
+                |-- EventLoop.h 
                 |-- EventLoop.cpp 实现事件循环的逻辑，用于处理网络事件
                 |-- Event.h
                 |-- Event.cpp 处理与事件循环相关的事件
@@ -71,6 +74,12 @@ lss/
                 |-- TcpConnection.h
                 |-- TcpConnection.cpp TCP相关操作
             |-- CMakeLists.txt 指定编译的文件目录
+            |-- TcpServer.h
+            |-- TcpServer.cpp TCP Server相关操作
+            |-- DnsService.h
+            |-- DnsService.cpp DNS Service相关的操作
+            |-- TcpClient.h
+            |-- TcpClient.cpp TCP Client相关操作
         |-- main/
             |-- CMakeLists.txt 指定编译所需的依赖文件
             |-- main.cpp 模块测试
@@ -302,3 +311,24 @@ C++的`三/五法则`：拷贝构造函数、拷贝赋值运算符、析构函�
 >   - TCP的数据是字节流，读取到的数据，不足一个消息，需要持有不足一个消息的数据；
 >   - MsgBuffer实现了一个环形缓冲区，先进先出；
 >   - MsgBuffer提供了安全写和便捷读的功能。
+> - **TcpServer**：
+>   - TcpServer通过Acceptor接收客户端连接，创建TcpConnection，并通知业务层；
+>   - TcpServer管理所有的TcpConnection，包括分配资源，回收资源，加入事件循环，退出事件循环，设置各种回调等；
+>   - TcpServer提供操作TcpConnection的接口，是业务层与连接的中间层；
+> - **DnsService**：
+>   - 本地DNS缓存的原因，域名在一定的时间内解析不会更新；
+>   - 同一个域名不必多次请求解析；
+>   - 后台统一解析能减少响应时间；
+>   - 域名的更新时间和频率可以通过配置文件设置.
+> - **TcpClient**：
+>   - TcpClient是TcpConnection的一个子类；
+>   - TcpClient主动发起连接，TcpClient和Server之间只存在一个连接；
+>   - TcpClient需要处理非阻塞连接，并且管理连接状态；
+>   - TcpClient连接成功后，通过TcpConnection处理IO事件；
+>   - TcpClient负责注册事件，删除事件；
+>   - 非阻塞连接：
+>       - 非阻塞的connect会马上返回，返回值有3种情况：
+>           - 返回0，表示连接成功；
+>           - 返回-1，并且错误号为EINPROGRESS，表示连接中；
+>           - 返回-1，错误号不为EINPROGRESS，表示出错。
+>       - 连接中的套接字变成可读可写，如果不是出错，则表示连接成功。
