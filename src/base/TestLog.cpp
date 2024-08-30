@@ -35,6 +35,7 @@ void TestLog()
 }
 */
 
+/*
 int main(int argc, const char **argv)
 {
     FileLogPtr log = fileManager->GetFileLog("test.log");
@@ -67,3 +68,4 @@ int main(int argc, const char **argv)
 
     return 0;
 }
+*/
