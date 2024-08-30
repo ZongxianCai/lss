@@ -21,3 +21,9 @@ target_link_libraries(DnsServiceTest base network)
 
 add_executable(TcpClientTest TcpClientTest.cpp)
 target_link_libraries(TcpClientTest base network)
+
+add_executable(UdpClientTest UdpClientTest.cpp)
+target_link_libraries(UdpClientTest base network)
+
+add_executable(UdpServerTest UdpServerTest.cpp)
+target_link_libraries(UdpServerTest base network)
