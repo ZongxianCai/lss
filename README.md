@@ -55,6 +55,8 @@ lss/
                     |-- TcpServerTest.cpp 测试TcpServer
                     |-- DnsServiceTest.cpp 测试DnsService
                     |-- TcpClientTest.cpp 测试TcpClient
+                    |-- UdpClientTest.cpp 测试UdpClient
+                    |-- UdpServerTest.cpp 测试UdpServer
                 |-- EventLoop.h 
                 |-- EventLoop.cpp 实现事件循环的逻辑，用于处理网络事件
                 |-- Event.h
@@ -82,6 +84,10 @@ lss/
             |-- DnsService.cpp DNS Service相关的操作
             |-- TcpClient.h
             |-- TcpClient.cpp TCP Client相关操作
+            |-- UdpClient.h
+            |-- UdpClient.cpp UDP Client相关操作
+            |-- UdpServer.h
+            |-- UdpServer.cpp UDP Server相关操作
         |-- main/
             |-- CMakeLists.txt 指定编译所需的依赖文件
             |-- main.cpp 模块测试
@@ -338,3 +344,11 @@ C++的`三/五法则`：拷贝构造函数、拷贝赋值运算符、析构函�
 >   - UDP面向数据报，报文是有边界的；
 >   - UdpSocket是Connection的一个子类；
 >   - UdpSocket负责处理UDP套接字的IO事件。
+> - **UdpClient**：
+>   - UdpClient是UdpSocket的一个子类；
+>   - UdpClient可以通过调用Connect来记录服务端IP和端口；
+>   - UdpClient负责注册事件，删除事件。
+> - **UdpServer**：
+>   - UdpServer是UdpSocket的一个子类；
+>   - UdpServer接收不同客户端的数据，通过客户端的IP和端口区分数据包；
+>   - UdpServer负责注册事件，删除事件。
