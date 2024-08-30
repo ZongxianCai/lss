@@ -167,3 +167,53 @@ std::vector<std::string> StringUtils::SplitString(const string& s, const string&
     
     return result;
 }
+
+// 有限状态机的字符串分割，将字符串s按照指定的分隔符delimiter进行分割
+std::vector<std::string> StringUtils::SplitStringWithFSM(const string& s, const char delimiter)
+{
+    enum
+    {
+        kStateInit = 0,
+        kStateNormal = 1,
+        kStateDelimiter = 2,
+        kStateEnd = 3
+    };
+
+    // result用于存储分割后的子字符串，临时变量定义在返回值的内存空间中，不会产生额外开销
+    std::vector<std::string> result;
+    
+    int state = kStateInit;
+
+    std::string tmp;
+
+    state = kStateNormal;
+
+    for (int pos = 0; pos < s.size();)
+    {
+        if (state == kStateNormal)
+        {
+            if (s.at(pos) == delimiter)
+            {
+                state = kStateDelimiter;
+                continue;
+            }
+
+            tmp.push_back(s.at(pos));
+            pos++;
+        }
+        else if (state == kStateDelimiter)
+        {
+            result.push_back(tmp);
+            tmp.clear();
+            state = kStateNormal;
+            pos++;
+        }
+    }
+
+    if (!tmp.empty())
+    {
+        result.push_back(tmp);
+    }
+
+    return result;
+}

@@ -32,6 +32,9 @@ namespace lss
 
             // 字符串分割
             static std::vector<std::string> SplitString(const string& s, const string& delimiter);
+
+            // 有限状态机的字符串分割
+            static std::vector<std::string> SplitStringWithFSM(const string& s, const char delimiter);
         };
     }
 }
