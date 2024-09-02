@@ -57,7 +57,7 @@ void TcpClient::ConnectInLoop()
     // 启用写入
     EnableWriting(true);
     // 设置空闲超时为3秒
-    EnableCheckIdleTimeout(3);
+    // EnableCheckIdleTimeout(3);
 
     // 创建SocketOpt对象以操作套接字
     SocketOpt opt(fd_);
