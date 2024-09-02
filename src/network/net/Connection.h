@@ -82,8 +82,8 @@ namespace lss
                 // 如果找到对应类型的上下文
                 if (iter != contexts_.end())
                 {
-                    // 将上下文转换为指定类型的共享指针并返回
-                    return std::dynamic_pointer_cast<T>(iter->second);
+                    // 将上下文转换为指定类型的共享指针并返回（静态转换为普通转换，动态转换为向上/向下的转换）
+                    return std::static_pointer_cast<T>(iter->second);
                 }
 
                 // 如果未找到对应类型的上下文，则返回空的共享指针
