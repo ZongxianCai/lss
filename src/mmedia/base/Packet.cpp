@@ -30,4 +30,5 @@ PacketPtr Packet::NewPacket(int32_t size)
     return PacketPtr(packet, [](Packet *p){
         delete [](char*)p;  // 使用 delete[] 释放 char 数组内存
     });
+    
 }

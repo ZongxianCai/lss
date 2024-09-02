@@ -175,6 +175,5 @@ namespace lss
     };
 
     #pragma pack()     // 恢复默认的内存对齐
-
     }
 }
