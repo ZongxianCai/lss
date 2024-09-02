@@ -3,6 +3,7 @@
 #include "network/net/EventLoop.h"
 #include "network/net/EventLoopThread.h"
 #include "network/TcpServer.h"
+#include "network/TestContext.h"
 
 using namespace lss::network;
 
@@ -10,6 +11,9 @@ using namespace lss::network;
 EventLoopThread eventloop_thread;
 // 创建一个线程对象
 std::thread th;
+
+// 定义TestContext智能指针
+using TestContextPtr = std::shared_ptr<TestContext>;
 
 // 定义HTTP响应字符串
 const char *http_response = "HTTP/1.0 200 OK\r\nServer: lss\r\nContent-Type: text/html\r\nContent-Length: 0\r\n\r\n";
@@ -31,22 +35,34 @@ int main(int argc, const char **agrv)
 
         // 设置消息回调函数
         server.SetMessageCallback([](const TcpConnectionPtr &con, MsgBuffer &buff){
+            TestContextPtr context = con->GetContext<TestContext>(kNormalContext);
+
+            context->ParseMessage(buff);
+
             // 输出接收到的消息
-            std::cout << "host: " << con->PeerAddr().ToIpPort() << " msg: " << buff.Peek() << std::endl;
+            // std::cout << "host: " << con->PeerAddr().ToIpPort() << " msg: " << buff.Peek() << std::endl;
             // 清空消息缓冲区
-            buff.RetrieveAll();
+            // buff.RetrieveAll();
             // 发送HTTP响应
-            con->Send(http_response, strlen(http_response));
+            // con->Send(http_response, strlen(http_response));
         });
 
         // 设置新连接回调函数
         server.SetNewConnectionCallback([&loop](const TcpConnectionPtr &con){
+                TestContextPtr context = std::make_shared<TestContext>(con);
+
+                context->SetTestMessageCallback([](const TcpConnectionPtr &con, const std::string &msg){
+                    std::cout << "message: " << msg << std::endl;
+                });
+                
+                con->SetContext(kNormalContext,context);
+
                 // 设置写完成回调函数
                 con->SetWriteCompleteCallback([&loop](const TcpConnectionPtr &con){
                 // 输出写完成信息
                 std::cout << "write complete host: " << con->PeerAddr().ToIpPort() << std::endl;
                 // 强制关闭连接
-                con->ForceClose();
+                // con->ForceClose();
             });
         });
 
