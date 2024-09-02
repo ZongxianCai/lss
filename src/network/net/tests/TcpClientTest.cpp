@@ -55,7 +55,7 @@ int main(int argc, const char ** agrv)
             if (con)
             {
                 // 输出写完成的信息
-                // std::cout << "host:" << con->PeerAddr().ToIpPort() << " write complete." << std::endl;
+                std::cout << "host:" << con->PeerAddr().ToIpPort() << " write complete." << std::endl;
             }
         });
 
@@ -64,6 +64,8 @@ int main(int argc, const char ** agrv)
             // 如果连接成功
             if (connected)
             {
+                auto size = htonl(strlen(http_request));
+                con->Send((const char *) &size, sizeof(size));
                 // 发送数据
                 con->Send(http_request, strlen(http_request));
             }
