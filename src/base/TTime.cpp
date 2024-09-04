@@ -1,3 +1,4 @@
+#include <ctime>
 #include "TTime.h"
 
 using namespace lss::base;
