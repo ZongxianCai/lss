@@ -31,7 +31,7 @@ int main(int argc, const char **agrv)
     if (loop)
     {
         // 定义一个InetAddress对象，表示服务器监听的IP地址和端口号（RTMP协议默认使用1935端口）
-        InetAddress listen("172.22.88.236:1935");
+        InetAddress listen("192.168.56.168:1935");
 
         // 创建一个TcpServer对象，绑定事件循环和监听地址，准备接受客户端连接
         TcpServer server(loop, listen);

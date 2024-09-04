@@ -17,7 +17,7 @@ std::thread th;
 using RtmpHandShakePtr = std::shared_ptr<RtmpHandShake>;
 
 // 定义两个字符串常量，http_request和http_response，分别表示一个简单的HTTP GET请求和HTTP响应
-const char *http_request = "GET / HTTP/1.0\r\nHost: 172.22.88.236\r\nAccept: */*\r\nContent-Type: text/plain\r\nContent-Length: 0\r\n\r\n";
+const char *http_request = "GET / HTTP/1.0\r\nHost: 192.168.56.168\r\nAccept: */*\r\nContent-Type: text/plain\r\nContent-Length: 0\r\n\r\n";
 const char *http_response = "HTTP/1.0 200 OK\r\nServer: lss\r\nContent-Type: text/html\r\nContent-Length: 0\r\n\r\n";
 
 int main(int argc, const char **agrv)
@@ -31,7 +31,7 @@ int main(int argc, const char **agrv)
     if (loop)
     {
         // 创建一个InetAddress对象，用于存储服务器地址信息，IP地址为172.22.88.236，端口号为1935（通常为RTMP协议端口）
-        InetAddress server("172.22.88.236:1935");
+        InetAddress server("192.168.56.168:1935");
 
         // 创建一个TcpClient智能指针对象，表示一个TCP客户端，并将其与事件循环和服务器地址绑定
         std::shared_ptr<TcpClient> client = std::make_shared<TcpClient>(loop, server);
