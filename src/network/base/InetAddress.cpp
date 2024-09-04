@@ -114,7 +114,7 @@ void InetAddress::GetSockAddr(struct sockaddr *saddr) const
         // 将地址结构体的指针赋值给 addr_in6 变量
         struct sockaddr_in6 *addr_in6 = (struct sockaddr_in6 *)saddr;
         // 将结构体的所有成员变量都初始化为 0
-        memset(&addr_in6, 0x00, sizeof(struct sockaddr_in6));
+        memset(addr_in6, 0x00, sizeof(struct sockaddr_in6));
         // 将 sin6_family 字段设置为 AF_INET6 ，表示该地址结构体是用于 IPv6 地址
         addr_in6->sin6_family = AF_INET6;
         // 将 sin6_port 字段设置为通过将端口号从字符串转换为整数后，使用htons函数将其转换为网络字节序
