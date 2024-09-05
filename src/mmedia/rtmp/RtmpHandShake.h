@@ -101,5 +101,8 @@ namespace lss
             // 当前握手状态，初始化为kHandShakeInit
             int32_t state_{kHandShakeInit};
         };
+
+        // Rtmp握手包的智能指针
+        using RtmpHandShakePtr = std::shared_ptr<RtmpHandShake>;
     }
 }
