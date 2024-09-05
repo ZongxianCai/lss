@@ -1,6 +1,7 @@
 #include "RtmpServer.h"
 #include "mmedia/base/MMediaLog.h"
-#include "RtmpHandShake.h"
+// #include "RtmpHandShake.h"
+#include "RtmpContext.h"
 
 using namespace lss::mm;
 
@@ -48,13 +49,19 @@ void RtmpServer::OnNewConnection(const TcpConnectionPtr &conn)
     }
 
     // 创建一个 RtmpHandShake 对象，用于处理 RTMP 握手流程
-    RtmpHandShakePtr shake = std::make_shared<RtmpHandShake>(conn);
+    // RtmpHandShakePtr shake = std::make_shared<RtmpHandShake>(conn);
+
+    // 创建一个 RtmpContext 对象，用于处理 RTMP 数据包
+    RtmpContextPtr shake = std::make_shared<RtmpContext>(conn, nullptr);
     
     // 将 RtmpHandShake 对象存储在连接的上下文中，方便后续使用
     conn->SetContext(kRtmpContext, shake);
 
     // 开始握手流程
-    shake->Start();
+    // shake->Start();
+
+    // 开始握手流程
+    shake->StartHandShake();
 }
 
 void RtmpServer::OnDestroyed(const TcpConnectionPtr &conn)
@@ -72,13 +79,19 @@ void RtmpServer::OnDestroyed(const TcpConnectionPtr &conn)
 void RtmpServer::OnMessage(const TcpConnectionPtr &conn, MsgBuffer &buff)
 {
     // 从连接的上下文中获取 RtmpHandShake 对象
-    RtmpHandShakePtr shake = conn->GetContext<RtmpHandShake>(kRtmpContext);
+    // RtmpHandShakePtr shake = conn->GetContext<RtmpHandShake>(kRtmpContext);
+
+    // 从连接的上下文中获取 RtmpContext 对象
+    RtmpContextPtr shake = conn->GetContext<RtmpContext>(kRtmpContext);
 
     // 如果握手对象存在，继续处理握手消息
     if (shake)
     {
         // 调用 HandShake 方法处理消息，返回值表示握手状态
-        int ret = shake->HandShake(buff);
+        // int ret = shake->HandShake(buff);
+
+        // 调用 Parse 方法处理消息，返回值表示握手状态
+        int ret = shake->Parse(buff);
 
         // 如果握手成功，记录日志
         if (ret == 0)
@@ -96,12 +109,16 @@ void RtmpServer::OnMessage(const TcpConnectionPtr &conn, MsgBuffer &buff)
 void RtmpServer::OnWriteComplete(const ConnectionPtr &conn)
 {
     // 从连接的上下文中获取 RtmpHandShake 对象
-    RtmpHandShakePtr shake = conn->GetContext<RtmpHandShake>(kRtmpContext);
+    // RtmpHandShakePtr shake = conn->GetContext<RtmpHandShake>(kRtmpContext);
+
+    // 从连接的上下文中获取 RtmpContext 对象
+    RtmpContextPtr shake = conn->GetContext<RtmpContext>(kRtmpContext);
 
     // 如果握手对象存在，调用 WriteComplete 方法处理写完成逻辑
     if (shake)
     {
-        shake->WriteComplete();
+        // shake->WriteComplete();
+        shake->OnWriteComplete();
     }
 }
 
