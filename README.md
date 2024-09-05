@@ -107,6 +107,8 @@ lss/
                 |-- RtmpServer.h
                 |-- RtmpServer.cpp rtmp server的相关协议及数据传递
                 |-- RtmpHeader.h rtmp协议头设计
+                |-- RtmpContext.h
+                |-- RtmpContext.cpp rtmp数据包的接收设计
             |-- tests/
                 |-- HandShakeClientTest.cpp 客户端握手测试
                 |-- HandShakeServerTest.cpp 服务端握手测试
@@ -458,3 +460,61 @@ C++的`三/五法则`：拷贝构造函数、拷贝赋值运算符、析构函�
 >   - 从缓存（二进制数据流）中读取整型数值，并且从网络字节序转成主机字节序。
 > - **BytesWriter**：
 >   - 将整数值转换为二进制格式并写入数据流中，常用于网络协议或文件写入等场景。
+> - **Rtmp Message重组实现**：
+>   - 一个Message只在同一个Chunk Stream传输，csid标识一路Chunk Stream；
+>   - 针对不同的Chunk Type（fmt），Message Header的处理方法不一样；
+>   - Extended Timestamp处理；
+>   - Chunk Data处理；
+>   - **csid计算**：
+>       - 取Chunk第一个字节后6位，得到csid，csid非0，1则不需要重新计算；
+>       - csid为0，则重新计算csid = 64 + chunk[1]；
+>       - csid为1，则重新计算csid = 64 + chunk[1] + 256 * chunk[2]。
+>   - **csid作用**：
+>       - 识别一路Chunk Stream；
+>       - 识别Message Header；
+>       - 识别Timestamp Delta；
+>       - 识别Extended Timestamp；
+>       - 识别Message Body。
+>   - **Chunk Type**：
+>       - Fmt = 0，Message Header 11 字节；
+>       - Fmt = 1，Message Header 7 字节；
+>       - Fmt = 2，Message Header 3 字节；
+>       - Fmt = 3，Message Header 0 字节；
+>       - Fmt不同值的含义：
+>           - Fmt = 0:
+>               - Timestamp 3个字节；
+>               - Message Length 3个字节；
+>               - Message Type 1个字节；
+>               - Message Stream ID 4个字节。
+>           - Fmt = 1:
+>               - Timestamp Delta 3个字节， Timestamp = Delta + Prev Timestamp；
+>               - Message Length 3个字节；
+>               - Message Type 1个字节；
+>               - Message Stream ID = Prev Message Stream ID。
+>           - Fmt = 2:
+>               - Timestamp Delta 3个字节， Timestamp = Delta + Prev Timestamp；
+>               - Message Length = Prev Message Length；
+>               - Message Type = Prev Message Type；
+>               - Message Stream ID = Prev Message Stream ID。
+>           - Fmt = 3:
+>               - Timestamp = Prev Delta + Prev Timestamp；
+>               - Message Length = Prev Message Length；
+>               - Message Type = Prev Message Type；
+>               - Message Stream ID = Prev Message Stream ID。
+>   - **Message Header解析实现**：
+>       - 按fmt的值，计算Message Header各个属性的值；
+>       - 通过csid缓存Message Header，给下一次解析提供信息；
+>       - 通过csid缓存delta值，用于fmt3类型计算timestamp。
+>   - **Extended Timestamp**：
+>       - 条件：Message Header中的 TimeStamp或者TimeStamp Delta字段值为0x00ffffff；
+>       - 计算方法：Message Header后的4个字节；
+>       - Fmt为3时， 前一个包有Extended Timestamp，则当前包也需要计算Extended Timestamp；
+>       - Fmt不为1时，Extended Timestamp计算出来的是TimeStamp Delta。
+>   - **Message Body重组**：
+>       - 一个Chunk，除去Chunk Header（Basic Header + Message Header + Extended Timestamp），剩下的就是Chunk Data，属于Message Body；
+>       - Message Body完成的条件是数据量达到Message Header描述的Message Length大小。
+>   - **RtmpContext设计***：
+>       - 接收到的数据处理：
+>           - 握手状态：由握手对象处理握手包；
+>           - 解析Message状态：由RtmpContext解析Message。
+>       - 接收数据状态转移。
