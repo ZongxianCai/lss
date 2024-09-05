@@ -402,7 +402,7 @@ int32_t RtmpHandShake::HandShake(MsgBuffer &buff)
             break;
         }
 
-        case kHandShakePostC2:
+        case kHandShakeWaitC2:
         {
             // 如果缓冲区中可读字节数少于 1536 字节，表示数据包未完全到达，返回 1 表示继续等待
             if (buff.ReadableBytes() < 1536)
@@ -421,6 +421,9 @@ int32_t RtmpHandShake::HandShake(MsgBuffer &buff)
                 RTMP_TRACE << " host : " << connection_->PeerAddr().ToIpPort() << " , handshake done.\n";
                 // 更新状态为握手完成
                 state_ = kHandShakeDone;
+
+                // 返回 0 表示握手完成
+                return 0;
             } 
             else 
             {
@@ -515,7 +518,7 @@ void RtmpHandShake::WriteComplete()
             // 打印日志，记录发送完成
             RTMP_TRACE << " host : " << connection_->PeerAddr().ToIpPort() << " , post S2.\n";
             // 更新状态为等待接收 C2 数据包
-            state_ = kHandShakePostC2;
+            state_ = kHandShakeWaitC2;
 
             break;
         }
