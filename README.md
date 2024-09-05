@@ -96,6 +96,10 @@ lss/
                 |-- Packet.cpp 多媒体数据包相关操作
                 |-- MMediaHandler.h 抽象基类，只定义纯虚函数
                 |-- MMediaLog.h 输出日志信息
+                |-- BytesReader.h
+                |-- BytesReader.cpp 从网络数据中读整型值
+                |-- BytesWriter.h
+                |-- BytesWriter.cpp 写一个整型值到发送缓存中
             |-- rtmp/
                 |-- RtmpHandShake.h
                 |-- RtmpHandShake.cpp rtmp握手
@@ -450,3 +454,7 @@ C++的`三/五法则`：拷贝构造函数、拷贝赋值运算符、析构函�
 >   - 需要从多个Chunk流中正确的解析RTMP Message；
 >   - 多个Message Stream可能通过同一个Chunk Stream传输；
 >   - 合适的协议存储结构，有利于解析RTMP Chunk包，还原Message包。
+> - **BytesReader**：
+>   - 从缓存（二进制数据流）中读取整型数值，并且从网络字节序转成主机字节序。
+> - **BytesWriter**：
+>   - 将整数值转换为二进制格式并写入数据流中，常用于网络协议或文件写入等场景。
