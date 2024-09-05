@@ -91,9 +91,23 @@ lss/
             |-- TestContext.h
             |-- TestContext.cpp Context上下文相关操作
         |-- mmedia/
-            |-- Packet.h
-            |-- Packet.cpp 多媒体数据包相关操作
-            |-- MMediaHandler.h 抽象基类，只定义纯虚函数
+            |-- base/
+                |-- Packet.h
+                |-- Packet.cpp 多媒体数据包相关操作
+                |-- MMediaHandler.h 抽象基类，只定义纯虚函数
+                |-- MMediaLog.h 输出日志信息
+            |-- rtmp/
+                |-- RtmpHandShake.h
+                |-- RtmpHandShake.cpp rtmp握手
+                |-- RtmpHandler.h 实现rtmp的特殊接口
+                |-- RtmpServer.h
+                |-- RtmpServer.cpp rtmp server的相关协议及数据传递
+                |-- RtmpHeader.h rtmp协议头设计
+            |-- tests/
+                |-- HandShakeClientTest.cpp 客户端握手测试
+                |-- HandShakeServerTest.cpp 服务端握手测试
+                |-- RtmpServerTest.cpp rtmp server测试
+                |-- CMakeLists.txt
         |-- main/
             |-- CMakeLists.txt 指定编译所需的依赖文件
             |-- main.cpp 模块测试
@@ -363,7 +377,7 @@ C++的`三/五法则`：拷贝构造函数、拷贝赋值运算符、析构函�
 
 ### 多媒体模块
 
-> - **有限状态机：**
+> - **有限状态机**：
 >   - 在协议解析上的应用：
 >       - 表示有限个状态以及在这些状态之间的转移和动作等行为的数学模型；
 >       - 状态有限，但是最少两个状态；
@@ -376,7 +390,7 @@ C++的`三/五法则`：拷贝构造函数、拷贝赋值运算符、析构函�
 >       - 定义状态转移，明确转移条件；
 >       - 定义每个状态转移执行的动作；
 >       - 实现控制器。
-> - **上下文Contex：**
+> - **上下文Contex**：
 >   - 程序执行依赖的变量的集合；
 >   - 承上启下；
 >   - 同时用到多个变量；
@@ -386,14 +400,53 @@ C++的`三/五法则`：拷贝构造函数、拷贝赋值运算符、析构函�
 >       - 协议的实现需要用到有限状态机；
 >       - 消息长度需要保存变量；
 >       - 解析出来的消息，需要调用回调通知上层。
-> - **多媒体数据包Packet：**
+> - **多媒体数据包Packet**：
 >   - 流媒体协议的数据包内容主要包含：音频包、视频包、Meta包、其他数据包；
 >   - 存储流媒体数据；
 >   - 分配内存和释放内存；
 >   - 判断包的类型。
-> - **多媒体模块协议回调类（MMediaHandler）：**
+> - **多媒体模块协议回调类（MMediaHandler）**：
 >   - 抽象基类，只定义纯虚函数；
 >   - 由于多媒体模块实现的流媒体协议，只负责解析和封装协议，并且多媒体数据包需要集中管理，所以，多媒体数据包由直播业务模块进行管理；
 >   - 多媒体模块的协议数据回调：
 >       - 把回调函数都集中在一起，抽象一个接口类出来;
 >       - 优势：一方面，回调都集中在一起，传递一个基类指针就能调用所有的回调；另一方面，每种协议需要的回调可能不一样，只需要继承这个基类，加上自己需要的回调就可以。
+
+---------------------------------------------------------------------------------------------------------------------------------
+
+### rtmp实现
+
+> - **rtmp握手实现**：
+>   - 随机数生成；
+>       - std::mt19937是一个高质量的伪随机数生成器；
+>       - std::uniform_int_distribution是一个离散均匀分布类，用于生成指定范围的随机整数。
+>   - 握手包大小；
+>       - C0和C1固定为1个字节，并且内容都是0x03；
+>       - C1和S1固定为1536个字节，C1和S1的digest需要保存，用于验证S2和C2；
+>       - C0, C1和S0, S1可以一起发送一起接收，一共1537个字节；
+>       - C2和S2固定为1536个字节。
+>   - 复杂握手digest计算和验证；
+>       - 算法hmac-sha256，使用openssl的接口实现；
+>       - 客户端和服务端用不同的固定的key；
+>       - offset需要针对两种结构分别计算；
+>       - C1和S1选择digest（764 bytes）在前，key（764 bytes）在后的结构；
+>       - C2和S2的验证需要用到S1和C1的digest部分。
+>   - digest offset计算：
+>       - offset = offset[0] + offset[1] + offset[2] + offset[3]；
+>       - 定位digest（764 bytes）部分，偏移量8或者8 + 764；
+>       - digest（32 bytes）的位置 = offset % （764 - 4 - 32）+（偏移量8或者8 + 764）+ 4。
+>   - 客户端握手状态机；
+>   - 服务端握手状态机。
+> - **RtmpServer**：
+>   - RtmpServer是TcpServer的一个子类；
+>   - TcpServer重点在于网络数据， RtmpServer重点在Rtmp协议数据；
+>   - RtmpServer的TcpConnection将需要进行Rtmp握手才算是建立起真正的Rtmp连接；
+>   - RtmpServer通过协议接口类传递数据给直播业务模块。
+> - **RtmpHandler**：
+>   - RtmpHandler是MMediaHandler的一个子类；
+>   - RtmpHandler实现Rtmp特殊的接口：OnPlay，OnPublish，OnPause，OnSeek。
+> - **RtmpHeader**：
+>   - rtmp数据包的传输，既有Message层面的流复用，也有Chunk层面的流复用；
+>   - 需要从多个Chunk流中正确的解析RTMP Message；
+>   - 多个Message Stream可能通过同一个Chunk Stream传输；
+>   - 合适的协议存储结构，有利于解析RTMP Chunk包，还原Message包。
