@@ -21,6 +21,19 @@ namespace lss
             kRtmpMessage = 2        // RTMP 已经进入消息处理阶段
         }; 
 
+        // ------------------------------- Rtmp协议控制消息和用户控制消息 -------------------------------
+        // 定义了 RTMP 协议中与用户控制消息相关的事件类型
+        enum RtmpEventType
+        {
+            kRtmpEventTypeStreamBegin = 0,  // 表示流开始事件。当客户端或服务器开始发送音视频流时，会触发此事件
+            kRtmpEventTypeStreamEOF,        // 表示流结束事件。当音视频流传输结束时，会触发此事件
+            kRtmpEventTypeStreamDry,        // 表示流干涸事件。意味着当前流没有更多数据可发送，可能是由于网络问题或其他原因导致的流中断
+            kRtmpEventTypeSetBufferLength,  // 设置缓冲区长度事件。用于调整客户端的缓冲区大小，避免因缓冲区溢出或不足而导致的流播放问题
+            kRtmpEventTypeStreamsRecorded,  // 流录制事件。表示流已经被记录下来，通常用于点播或录像的场景
+            kRtmpEventTypePingRequest,      // Ping 请求事件。用于检测连接的延迟或确认连接的有效性，类似于网络中的 ICMP Ping
+            kRtmpEventTypePingResponse      // Ping 响应事件。对 Ping 请求的响应，确认连接状态
+        };
+
         class RtmpContext
         {
         public:
@@ -66,6 +79,36 @@ namespace lss
 
             // 将数据包推入发送队列中，等待发送
             void PushOutQueue(PacketPtr &&packet);
+
+            // ------------------------------- Rtmp协议控制消息和用户控制消息 -------------------------------
+            // 处理RTMP协议中的“Chunk Size”消息
+            void HandleChunkSize(PacketPtr &packet);
+
+            // 处理RTMP协议中的“Window Size”消息
+            void HandleAckWindowSize(PacketPtr &packet);
+
+            // 处理RTMP协议中的用户控制消息
+            void HandleUserMessage(PacketPtr &packet);
+
+            // 发送设置 Chunk Size 的消息
+            void SendSetChunkSize();
+
+            // 发送设置确认窗口大小的消息
+            void SendAckWindowSize();
+
+            // 发送设置对端带宽的消息
+            void SendSetPeerBandwidth();
+
+            // 发送已接收字节数的消息
+            void SendBytesRecv();
+
+            /*
+             * 发送用户控制消息
+             * nType: 控制消息类型
+             * value1: 消息的第一个值
+             * value2: 消息的第二个值（可能为空）
+             */
+            void SendUserCtrlMessage(short nType, uint32_t value1, uint32_t value2);
 
             // ------------------------------- 数据接收部分 -------------------------------
             // RtmpHandShake 对象，用于管理和处理 RTMP 握手过程
@@ -122,6 +165,16 @@ namespace lss
 
             // 表示当前是否正在发送数据的标志位
             bool sending_{false};
+
+            // ------------------------------- Rtmp协议控制消息和用户控制消息 -------------------------------
+            // 确认窗口大小，单位是字节，默认值为2500000字节（约2.5MB）
+            int32_t ack_size_{2500000};
+
+            // 已接收的字节数，初始化为0
+            int32_t in_bytes_{0};
+
+            // 上一个计算的剩余字节数，初始化为0
+            int32_t last_left_{0};
         };
 
         // 定义智能指针类型 RtmpContextPtr，用于管理 RtmpContext 对象的生命周期
