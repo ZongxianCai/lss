@@ -24,6 +24,7 @@ namespace lss
         class RtmpContext
         {
         public:
+            // ------------------------------- 数据接收部分 -------------------------------
             // 构造函数，接收 TCP 连接指针 conn 和处理器指针 handler，并且可选参数 client 表示是否为客户端模式
             RtmpContext(const TcpConnectionPtr &conn, RtmpHandler *handler, bool client = false);
 
@@ -42,10 +43,31 @@ namespace lss
             // 消息完成的回调函数，处理已经完全接收并解析的消息数据
             void MessageComplete(PacketPtr && data);
 
+            // ------------------------------- 数据发送部分 -------------------------------
+            // 构建一个 RTMP 块（chunk），将数据封装成 RTMP 协议格式
+            bool BuildChunk(const PacketPtr &packet, uint32_t timestamp = 0, bool fmt0 = false);
+
+            // 发送数据，将构建好的块发送出去
+            void Send();
+
+            // 判断当前是否准备好发送数据
+            bool Ready() const;
+
             // 析构函数，使用默认析构行为
             ~RtmpContext() = default;
 
         private:
+            // ------------------------------- 数据发送部分 -------------------------------
+            // 构建一个 RTMP 块（chunk），使用右值引用的方式接收数据包
+            bool BuildChunk (PacketPtr &&packet, uint32_t timestamp = 0, bool fmt0 = false);
+
+            // 检查并发送数据，确保满足发送条件后执行发送
+            void CheckAndSend();
+
+            // 将数据包推入发送队列中，等待发送
+            void PushOutQueue(PacketPtr &&packet);
+
+            // ------------------------------- 数据接收部分 -------------------------------
             // RtmpHandShake 对象，用于管理和处理 RTMP 握手过程
             RtmpHandShake handshake_;
 
@@ -72,6 +94,34 @@ namespace lss
 
             // 输入块大小 in_chunk_size_，初始值为 128，表示解析时的块大小
             int32_t in_chunk_size_{128};
+
+            // ------------------------------- 数据发送部分 -------------------------------
+            // 用于临时存储发送的数据块的缓冲区，大小为 4096 字节
+            char out_buffer_[4096];
+
+            // 指向缓冲区当前写入位置的指针
+            char *out_current_{nullptr};
+
+            // 用于存储不同 Chunk Stream ID (CSID) 的时间戳增量
+            std::unordered_map<uint32_t, uint32_t> out_deltas_;
+
+            // 用于存储不同 CSID 的消息头部信息
+            std::unordered_map<uint32_t, RtmpMsgHeaderPtr> out_message_headers_;
+
+            // 发送时使用的块大小，默认为 4096 字节
+            int32_t out_chunk_size_{4096};
+
+            // 用于存储等待发送的数据包队列
+            std::list<PacketPtr> out_waiting_queue_;
+
+            // 用于存储正在发送的数据块列表
+            std::list<BufferNodePtr> sending_bufs_;
+
+            // 用于存储正在发送的数据包队列
+            std::list<PacketPtr> out_sending_packets_;
+
+            // 表示当前是否正在发送数据的标志位
+            bool sending_{false};
         };
 
         // 定义智能指针类型 RtmpContextPtr，用于管理 RtmpContext 对象的生命周期
