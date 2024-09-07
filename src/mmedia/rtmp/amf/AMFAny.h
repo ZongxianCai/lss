@@ -89,12 +89,38 @@ namespace lss
             // 虚函数，返回子元素的数量，默认为1
             virtual int32_t Count() const;
 
+            // -------------------- AMF 封装函数 ---------------------
+            // 将一个双精度浮点数 (double) 编码为 AMF 编码的数字格式，并将结果写入 output 缓冲区
+            static int32_t EncodeNumber(char *output, double dVal);
+
+            // 将一个字符串 (std::string) 编码为 AMF 编码的字符串格式，并将结果写入 output 缓冲区
+            static int32_t EncodeString(char *output, const std::string& str);
+
+            // 将一个布尔值 (bool) 编码为 AMF 编码的布尔格式，并将结果写入 output 缓冲区
+            static int32_t EncodeBoolean(char *output, bool b);
+
+            // 将带有名称的双精度浮点数编码为 AMF 编码的格式，并将结果写入 output 缓冲区
+            static int32_t EncodeNamedNumber(char *output, const std::string &name, double dVal);
+
+            // 将带有名称的字符串编码为 AMF 编码的格式，并将结果写入 output 缓冲区
+            static int32_t EncodeNamedString(char *output, const std::string &name, const std::string &value);
+
+            // 将带有名称的布尔值编码为 AMF 编码的格式，并将结果写入 output 缓冲区
+            static int32_t EncodeNamedBoolean(char *output, const std::string &name, bool bVal);
+
             // 虚析构函数，确保派生类的析构函数也被调用
             virtual ~AMFAny();
 
         protected:
             // 静态函数，解码字符串数据，返回解码后的字符串
             static std::string DecodeString(const char *data);
+
+            // -------------------- AMF 封装函数 ---------------------
+            // 将名称编码为 AMF 格式，并将结果写入 buff 缓冲区
+            static int EncodeName(char *buff, const std::string &name);
+
+            // 将双精度浮点数直接写入缓冲区 buff，通常是 AMF 编码的一部分
+            static int WriteNumber(char *buff, double value);
             
             // 成员变量，存储AMF数据的名称
             std::string name_;
