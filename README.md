@@ -671,3 +671,50 @@ C++的`三/五法则`：拷贝构造函数、拷贝赋值运算符、析构函�
 >       - AMFObject实现IsObject；
 >       - AMFObject实现Dump；
 >       - AMFObject实现Count。
+> - **AMF封装**：
+>   - 封装AMF版本：AMF0；
+>   - 实用为主，足够完成命令消息交互；
+>   - 简单类型封装：Number，String，Boolean；
+>   - 复杂类型封装：Object；
+>   - 键值对封装：NameNumber，NameString，NameBoolean。
+> - **命令消息**：
+>   - NetConnection是客户端和服务器之间的双向连接的高级表达：
+>       - 可以使用的命令：connect，call，close，createStream；
+>       - 消息类型20，csid固定使用3；
+>       - message stream id 为0。
+>   - NetStream定义了通过NetConnection把音频，视频和数据消息流在客户端和服务器之间进行交换的通道；
+>   - **connect命令**：
+>       - 客户端在握手成功后，发起connect命令；
+>       - 服务端收到connect命令后，执行connect操作，并用_result或者_error回复客户端；
+>       - 命令处理：
+>           - tcUrl属性描述推流的URL；
+>           - app属性描述客户端的推流点；
+>           - objectEncoding指示接下来使用的amf版本。
+>       - 命令响应：
+>           - 设置对端的确认窗口大小以及带宽大小，也可以设置对端的chunk size。
+>   - **connectStream命令处理**：
+>       - 客户端在收到connect响应后，发起createStream命令；
+>       - 服务端收到createStream命令后，执行createStream操作，并用_result或者_error回复客户端；
+>       - 第二个属性为Transaction ID，回复消息需要用这个值。
+>   - **play命令**：
+>       - 播放客户端在接收到createStream响应后，发起play命令；
+>       - 服务端收到play命令后，执行play操作，发送用户控制消息通知流开始事件，并用onStatus通知客户端。
+>   - **play命令处理**：
+>       - 第二个属性为Transaction ID；
+>       - 第四个参数为流的名称；
+>       - 需要回复用户控制消息，通知事件kRtmpUserStreamBegin；
+>       - 发送状态NetStream.Play.Start；
+>       - 通知业务层。
+>   - **publish命令**：
+>       - 推流客户端在接收到createStream响应后，发起publish命令；
+>       - 服务端收到publish命令后，执行publish操作，并用onStatus通知客户端。
+>   - **publish命令处理**：
+>       - 第二个属性为Transaction ID；
+>       - 第四个参数为流的名称；
+>       - 发送状态NetStream.Publish.Start；
+>       - 通知业务层。
+>   - **_result命令处理**：
+>       - 第二个属性为Transaction ID，标识是哪一个命令的结果。
+>   - **_error命令处理**：
+>       - 第二个属性为Transaction ID，标识是哪一个命令的结果；
+>       - 第四个对象中的description字符串描述出错的信息。
