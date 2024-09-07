@@ -11,6 +11,9 @@ namespace lss
             // 默认构造函数
             BytesReader() = default;
 
+            // 静态方法，读取8字节的无符号整数
+            static uint64_t ReadUint64T(const char *data);
+
             // 静态方法，读取4字节的无符号整数
             static uint32_t ReadUint32T(const char *data);
 

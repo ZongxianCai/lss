@@ -1,8 +1,27 @@
 #include <cstdint>
 #include <netinet/in.h>
+#include <cstring>
 #include "BytesReader.h"
 
 using namespace lss::mm;
+
+// 读取8字节的无符号整数，并将其从网络字节序转换为主机字节序
+uint64_t BytesReader::ReadUint64T(const char *data)
+{
+    // 将字符指针转换为 64 位无符号整数指针
+    uint64_t in  = *((uint64_t*)data);
+
+    // 使用 __bswap_64 函数将网络字节序转换为主机字节序
+    uint64_t res = __bswap_64(in);
+
+    double value;
+
+    // 将主机字节序转换为双精度浮点数
+    memcpy(&value, &res, sizeof(double));
+
+    // 将双精度浮点数转换为 64 位无符号整数
+    return value;
+}
 
 // 读取4字节的无符号整数，并将其从网络字节序转换为主机字节序
 uint32_t BytesReader::ReadUint32T(const char *data)
