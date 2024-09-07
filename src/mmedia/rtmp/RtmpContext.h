@@ -6,6 +6,7 @@
 #include "RtmpHandler.h"
 #include "RtmpHeader.h"
 #include "mmedia/base/Packet.h"
+#include "mmedia/rtmp/amf/AMFObject.h"
 
 namespace lss
 {
@@ -116,6 +117,44 @@ namespace lss
              */
             void SendUserCtrlMessage(short nType, uint32_t value1, uint32_t value2);
 
+            // ------------------------------ 命令解析与实现部分 ------------------------------
+
+            // 发送 RTMP 连接请求
+            void SendConnect();
+
+            // 处理 RTMP 连接响应
+            void HandleConnect(AMFObject &obj);
+
+            // 发送 RTMP 创建流请求
+            void SendCreateStream();
+
+            // 处理 RTMP 创建流响应
+            void HandleCreateStream(AMFObject &obj);
+
+            // 发送 RTMP 状态消息
+            void SendStatus(const std::string &level, const std::string &code, const std::string &description);
+            
+            // 发送 RTMP 播放请求
+            void SendPlay();
+
+            // 处理 RTMP 播放响应
+            void HandlePlay(AMFObject &obj);
+
+            // 解析 RTMP URL 中的流名称和 tcUrl
+            void ParseNameAndTcUrl();
+
+            // 发送 RTMP 发布流请求
+            void SendPublish();
+
+            // 处理 RTMP 发布流响应
+            void HandlePublish(AMFObject &obj);
+
+            // 处理 RTMP 调用结果响应
+            void HandleResult(AMFObject &obj);
+
+            // 处理 RTMP 错误消息
+            void HandleError(AMFObject &obj);
+
             // ------------------------------- 数据接收部分 -------------------------------
             // RtmpHandShake 对象，用于管理和处理 RTMP 握手过程
             RtmpHandShake handshake_;
@@ -181,6 +220,25 @@ namespace lss
 
             // 上一个计算的剩余字节数，初始化为0
             int32_t last_left_{0};
+
+            // ------------------------------ 命令解析与实现部分 ------------------------------
+            // RTMP 连接中用于指定目标应用
+            std::string app_;
+
+            // RTMP 连接中用于指定流的地址
+            std::string tc_url_;
+
+            // 流的名称，用于指定要播放或发布的流
+            std::string name_;
+
+            // 会话名称，用于标识当前 RTMP 会话
+            std::string session_name_;
+
+            // 附加参数，用于传递额外的连接信息
+            std::string param_;
+            
+            // 标识当前 RTMP 连接是否作为播放器（false 表示发布者，true 表示播放器）
+            bool is_player_{false};
         };
 
         // 定义智能指针类型 RtmpContextPtr，用于管理 RtmpContext 对象的生命周期
