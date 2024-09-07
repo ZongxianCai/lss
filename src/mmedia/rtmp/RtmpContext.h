@@ -90,6 +90,12 @@ namespace lss
             // 处理RTMP协议中的用户控制消息
             void HandleUserMessage(PacketPtr &packet);
 
+            /* 处理 AMF 命令
+             * param data: 包含 AMF 消息的智能指针
+             * param amf3: 布尔值，指示是否为 AMF3 格式（默认为 false，即 AMF0 格式）
+             */
+            void HandleAmfCommand(PacketPtr &data, bool amf3 = false);
+
             // 发送设置 Chunk Size 的消息
             void SendSetChunkSize();
 

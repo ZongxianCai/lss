@@ -2,6 +2,7 @@
 #include "mmedia/base/MMediaLog.h"
 #include "mmedia/base/BytesReader.h"
 #include "mmedia/base/BytesWriter.h"
+#include "mmedia/rtmp/amf/AMFObject.h"
 
 using namespace lss::mm;
 
@@ -407,6 +408,22 @@ void RtmpContext::MessageComplete(PacketPtr && data)
         {
             // 调用 HandleAckWindowSize 函数处理窗口确认大小消息
             HandleAckWindowSize(data);
+            break;
+        }
+
+        // 处理 AMF3 消息类型
+        case kRtmpMsgTypeAMF3Message:
+        {
+            // 调用 HandleAmfCommand 函数来处理 AMF3 类型的命令消息
+            HandleAmfCommand(data, true);
+            break;
+        }
+
+        // 处理 AMF 消息类型
+        case kRtmpMsgTypeAMFMessage:
+        {
+            // 调用 HandleAmfCommand 函数来处理 AMF 类型的命令消息
+            HandleAmfCommand(data);
             break;
         }
         
@@ -1279,4 +1296,42 @@ void RtmpContext::HandleUserMessage(PacketPtr &packet)
         default:
             break;                             
     }
+}
+
+void RtmpContext::HandleAmfCommand(PacketPtr &data, bool amf3)
+{
+    // 打印 AMF 消息的长度和来源主机地址
+    RTMP_TRACE << " amf message len : " << data->PacketSize() << " host : " << connection_->PeerAddr().ToIpPort();
+
+    // 获取消息体的起始位置
+    const char *body = data->Data();
+
+    // 获取消息的总长度
+    int32_t msg_len = data->PacketSize();
+
+    // 如果是 AMF3 消息，跳过第一个字节（AMF3 消息格式的标志位）
+    if (amf3)
+    {
+        // 跳过一个字节
+        body += 1;
+
+        // 减去一个字节的长度
+        msg_len -= 1;
+    }
+
+    // 创建 AMFObject 对象用于解码 AMF 消息
+    AMFObject obj;
+
+    // 尝试解码消息体
+    if (obj.Decode(body, msg_len) < 0)
+    {
+        // 解码失败，打印错误信息
+        RTMP_ERROR << " amf decode failed. host : " << connection_->PeerAddr().ToIpPort();
+
+        // 退出函数
+        return;
+    }
+
+    // 打印解码后的 AMF 对象内容
+    obj.Dump();
 }
