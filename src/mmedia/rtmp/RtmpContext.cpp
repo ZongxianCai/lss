@@ -12,7 +12,21 @@ RtmpContext::RtmpContext(const TcpConnectionPtr &conn, RtmpHandler *handler, boo
     , connection_(conn)             // 初始化 connection_ 成员，保存传入的 TCP 连接
     , rtmp_handler_(handler)        // 初始化 rtmp_handler_ 成员，保存传入的 RTMP 处理器指针
 {
+    // 绑定 "connect" 命令到 HandleConnect 函数，使用 std::bind 以便将 this 指针和第一个参数绑定到函数调用
+    commands_["connect"] = std::bind(&RtmpContext::HandleConnect, this, std::placeholders::_1);
+    // 绑定 "createStream" 命令到 HandleCreateStream 函数
+    commands_["createStream"] = std::bind(&RtmpContext::HandleCreateStream, this, std::placeholders::_1);
+    // 绑定 "_result" 命令到 HandleResult 函数
+    commands_["_result"] = std::bind(&RtmpContext::HandleResult, this, std::placeholders::_1);
+    // 绑定 "_error" 命令到 HandleError 函数
+    commands_["_error"] = std::bind(&RtmpContext::HandleError, this, std::placeholders::_1);
+    // 绑定 "play" 命令到 HandlePlay 函数
+    commands_["play"] = std::bind(&RtmpContext::HandlePlay, this, std::placeholders::_1);
+    // 绑定 "publish" 命令到 HandlePublish 函数
+    commands_["publish"] = std::bind(&RtmpContext::HandlePublish, this, std::placeholders::_1);
 
+    // 初始化 out_current_ 指针，使其指向 out_buffer_ 的起始位置
+    out_current_ = out_buffer_;
 }
 
 int32_t RtmpContext::Parse(MsgBuffer &buff)
@@ -357,7 +371,7 @@ int32_t RtmpContext::ParseMessage(MsgBuffer &buff)
             // 设置数据包的消息类型
             packet->SetPacketType(msg_type);
             // 设置数据包的时间戳
-            packet->SetTimestamp(timestamp);
+            packet->SetTimeStamp(timestamp);
             // 调用 MessageComplete 函数处理完整的消息
             MessageComplete(std::move(packet));
             // 重置数据包指针
@@ -367,6 +381,34 @@ int32_t RtmpContext::ParseMessage(MsgBuffer &buff)
 
     // 返回 1 表示解析成功
     return 1;
+}
+
+void RtmpContext::SetPacketType(PacketPtr &packet)
+{
+    // 如果包的类型是音频类型
+    if (packet->PacketType() == kRtmpMsgTypeAudio)
+    {
+        // 将包的类型设置为音频包类型
+        packet->SetPacketType(kPacketTypeAudio);
+    }
+    // 如果包的类型是视频类型
+    else if (packet->PacketType() == kRtmpMsgTypeVideo)
+    {
+        // 将包的类型设置为视频包类型
+        packet->SetPacketType(kPacketTypeVideo);
+    } 
+    // 如果包的类型是元数据类型
+    else if (packet->PacketType() == kRtmpMsgTypeMetadata)
+    {
+        // 将包的类型设置为元数据包类型
+        packet->SetPacketType(kPacketTypeMeta);
+    }
+    // 如果包的类型是 AMF3 元数据类型
+    else if (packet->PacketType() == kRtmpMsgTypeAMF3Meta)
+    {
+        // 将包的类型设置为 AMF3 元数据包类型
+        packet->SetPacketType(kPacketTypeMeta3);
+    }              
 }
 
 void RtmpContext::MessageComplete(PacketPtr && data)
@@ -427,6 +469,30 @@ void RtmpContext::MessageComplete(PacketPtr && data)
             HandleAmfCommand(data);
             break;
         }
+
+        // 处理 AMF 元数据
+        case kRtmpMsgTypeAMFMeta:
+
+        // 处理 AMF3 元数据
+        case kRtmpMsgTypeAMF3Meta:
+
+        // 处理音频数据
+        case kRtmpMsgTypeAudio:
+
+        // 处理视频数据
+        case kRtmpMsgTypeVideo:
+        {
+            // 设置包的类型
+            SetPacketType(data);
+
+            // 如果 rtmp_handler_ 对象存在
+            if (rtmp_handler_)
+            {
+                // 调用 rtmp_handler_ 的 OnRecv 方法，处理接收到的数据
+                rtmp_handler_->OnRecv(connection_, data);
+            }
+            break;
+        }
         
         // 处理不支持的消息类型
         default:
@@ -445,8 +511,8 @@ bool RtmpContext::BuildChunk(const PacketPtr &packet, uint32_t timestamp, bool f
     // 如果消息头存在，开始构建块
     if (h)
     {
-        // 将数据包添加到正在发送的队列中
         out_sending_packets_.emplace_back(packet);
+
         // 获取该 CSID 上次发送的消息头
         RtmpMsgHeaderPtr &prev = out_message_headers_[h->cs_id];
         // 判断是否可以使用时间戳增量，减少数据冗余
@@ -524,6 +590,7 @@ bool RtmpContext::BuildChunk(const PacketPtr &packet, uint32_t timestamp, bool f
 
             memcpy(p, &h->msg_sid, 4);
             p += 4;
+
             // 重置增量
             out_deltas_[h->cs_id] = 0;
         } 
@@ -551,7 +618,7 @@ bool RtmpContext::BuildChunk(const PacketPtr &packet, uint32_t timestamp, bool f
         }    
 
         // 将构建好的消息头部数据保存到发送缓冲区
-        BufferNodePtr nheader = std::make_shared<BufferNode>(out_current_, p-out_current_);
+        BufferNodePtr nheader = std::make_shared<BufferNode>(out_current_, p - out_current_);
         sending_bufs_.emplace_back(std::move(nheader));
         out_current_ = p;
 
@@ -582,7 +649,7 @@ bool RtmpContext::BuildChunk(const PacketPtr &packet, uint32_t timestamp, bool f
         {
             // 计算每次发送的数据块大小
             // 指向当前要处理的消息体数据的开始位置
-            const char * chunk = body + bytes_parsed;
+            const char *chunk = body + bytes_parsed;
             // 表示当前块的大小，等于剩余消息体长度和设定的最大块大小（out_chunk_size_）之间的较小值
             int32_t size = h->msg_len - bytes_parsed;
             size = std::min(size, out_chunk_size_);
@@ -655,6 +722,9 @@ bool RtmpContext::BuildChunk(const PacketPtr &packet, uint32_t timestamp, bool f
             }
         }
 
+        // 将数据包添加到正在发送的队列中
+        // out_sending_packets_.emplace_back(std::move(packet));
+
         // 如果消息体的所有块都成功构建并添加到发送队列，返回 true 表示成功
         return true;
     }
@@ -711,12 +781,10 @@ bool RtmpContext::BuildChunk (PacketPtr &&packet, uint32_t timestamp, bool fmt0)
     // 如果消息头存在
     if (h)
     {
-        // 将数据包添加到正在发送的队列中
-        out_sending_packets_.emplace_back(std::move(packet));
         // 获取之前的消息头，用于与当前消息头进行比较
         RtmpMsgHeaderPtr &prev = out_message_headers_[h->cs_id];
         // 检查是否使用时间戳增量（非格式0，之前的消息头存在，且时间戳合法，消息流ID相同）
-        bool use_delta = !fmt0 && !prev && timestamp >= prev->timestamp && h->msg_sid == prev->msg_sid;
+        bool use_delta = !fmt0 && prev && timestamp >= prev->timestamp && h->msg_sid == prev->msg_sid;
         
         // 如果之前的消息头不存在，则初始化
         if (!prev)
@@ -752,33 +820,26 @@ bool RtmpContext::BuildChunk (PacketPtr &&packet, uint32_t timestamp, bool fmt0)
         // 指向当前缓冲区位置的指针
         char *p = out_current_;
 
-        // 根据消息流 ID 设置 chunk 头部
-        // 如果 Chunk Stream ID (cs_id) 小于 64
-            if (h->cs_id < 64)
-            {
-                // 将格式3的标志位与 cs_id 结合编码到一个字节中，并存入缓冲区，同时指针 p 向后移动一位
-                *p++ = (char)(0xC0 | h->cs_id);
-            }
-            // 如果 Chunk Stream ID (cs_id) 在 64 到 319 之间
-            else if (h->cs_id < (64 + 256))
-            {
-                // 首先将格式3的标志位和高位部分0编码到一个字节中，并存入缓冲区，同时指针 p 向后移动一位
-                *p++ = (char)(0xC0 | 0); 
-                // 将 cs_id 减去 64 的结果编码到第二个字节中，并存入缓冲区，同时指针 p 向后移动一位
-                *p++ = (char)(h->cs_id - 64);
-            }
-            // 如果 Chunk Stream ID (cs_id) 大于等于 320
-            else 
-            {
-                // 首先将格式3的标志位和高位部分1编码到一个字节中，并存入缓冲区，同时指针 p 向后移动一位
-                *p++ = (char)(0xC0 | 1); 
-                // 计算出需要编码的 cs_id 值（减去 64）
-                uint16_t cs = h->cs_id - 64;
-                // 将这个 16 位的 cs_id 复制到缓冲区中
-                memcpy(p, &cs, sizeof(uint16_t));
-                // 指针 p 向后移动两个字节，为后续数据存储做准备
-                p += sizeof(uint16_t);
-            }
+        // 如果 chunk stream ID 小于 64，直接使用单字节表示
+        if (h->cs_id < 64)
+        {
+           // 将 fmt 左移 6 位，然后与 cs_id 进行按位或操作，将结果存入 p，并且 p 指针自增 
+            *p++ = (char)((fmt << 6) | h->cs_id);  
+        }
+        // 如果 chunk stream ID 在 64 到 319 之间，使用两字节表示
+        else if (h->cs_id < (64 + 256))
+        {
+            *p++ = (char)((fmt << 6) | 0);  // 第一字节：fmt 左移 6 位，与 0 进行按位或操作
+            *p++ = (char)(h->cs_id - 64);   // 第二字节：存储 cs_id 减去 64 的值
+        }
+        // 如果 chunk stream ID 大于等于 320，使用三字节表示
+        else
+        {
+            *p++ = (char)((fmt << 6) | 1);  // 第一字节：fmt 左移 6 位，与 1 进行按位或操作
+            uint16_t cs = h->cs_id - 64;    // 计算 cs_id 减去 64 的值，并将其存入一个 16 位无符号整数中
+            memcpy(p, &cs, sizeof(uint16_t)); // 将 cs 的内容复制到 p 所指向的位置
+            p += sizeof(uint16_t);            // p 指针向前移动 2 字节
+        }
 
         // 设置时间戳变量
         auto ts = timestamp;
@@ -832,7 +893,7 @@ bool RtmpContext::BuildChunk (PacketPtr &&packet, uint32_t timestamp, bool fmt0)
         }    
 
         // 创建并保存数据块头部
-        BufferNodePtr nheader = std::make_shared<BufferNode>(out_current_, p-out_current_);
+        BufferNodePtr nheader = std::make_shared<BufferNode>(out_current_, p - out_current_);
         sending_bufs_.emplace_back(std::move(nheader));
         out_current_ = p;
 
@@ -923,7 +984,7 @@ bool RtmpContext::BuildChunk (PacketPtr &&packet, uint32_t timestamp, bool fmt0)
                 }      
 
                 // 创建并保存后续数据块头部
-                BufferNodePtr nheader = std::make_shared<BufferNode>(out_current_, p-out_current_);
+                BufferNodePtr nheader = std::make_shared<BufferNode>(out_current_, p - out_current_);
                 sending_bufs_.emplace_back(std::move(nheader));
                 // 更新缓冲区指针
                 out_current_ = p;      
@@ -934,6 +995,9 @@ bool RtmpContext::BuildChunk (PacketPtr &&packet, uint32_t timestamp, bool fmt0)
                 break;
             }
         }
+
+        // 将数据包添加到正在发送的队列中
+        out_sending_packets_.emplace_back(std::move(packet));
 
         // 构建成功，返回 true
         return true;
@@ -1076,6 +1140,8 @@ void RtmpContext::SendSetPeerBandwidth()
     
     // 设置限制类型，0x02 表示动态（type = 2）
     *body++ = 0x02;
+
+    header->msg_len = 5;
 
     // 设置数据包的实际大小为 5 字节（4 字节的确认窗口大小 + 1 字节的限制类型）
     packet->SetPacketSize(5);
@@ -1333,8 +1399,24 @@ void RtmpContext::HandleAmfCommand(PacketPtr &data, bool amf3)
         return;
     }
 
-    // 打印解码后的 AMF 对象内容
-    obj.Dump();
+    // 提取 AMF 消息中的方法名（通常是消息的第一个属性）
+    const std::string &method = obj.Property(0)->String();
+
+    // 打印接收到的 AMF 命令及其来源主机地址
+    RTMP_TRACE << " amf command : " << method << " host : " << connection_->PeerAddr().ToIpPort();
+
+    // 查找对应的处理函数
+    auto iter = commands_.find(method);
+
+    if (iter == commands_.end())
+    {
+        // 如果未找到对应的处理函数，打印警告信息
+        RTMP_TRACE << " not surpport method : " << method << " host : " << connection_->PeerAddr().ToIpPort();
+        return ;
+    }
+
+    // 调用对应的处理函数，并将解码后的 AMFObject 作为参数传递
+    iter->second(obj);
 }
 
 // ------------------------------ 命令解析与实现部分 ------------------------------
@@ -1443,6 +1525,12 @@ void RtmpContext::HandleConnect(AMFObject &obj)
 
     // 输出日志，记录接收到的连接信息，包括tcUrl、app名称和是否使用AMF3编码
     RTMP_TRACE << " recv connect tcUrl : " << tc_url_ << " app : " << app_ << " amf3 : " << amf3;
+
+    SendAckWindowSize();
+
+    SendSetPeerBandwidth();
+
+    SendSetChunkSize();
 
     // 创建一个新的Packet，大小为1024字节
     PacketPtr packet = Packet::NewPacket(1024);

@@ -35,6 +35,9 @@ namespace lss
             kRtmpEventTypePingResponse      // Ping 响应事件。对 Ping 请求的响应，确认连接状态
         };
 
+        // 定义了 RTMP 协议中与用户控制消息相关的命令回调的别名
+        using CommandFunc = std::function<void (AMFObject &obj)>;
+
         class RtmpContext
         {
         public:
@@ -155,6 +158,8 @@ namespace lss
             // 处理 RTMP 错误消息
             void HandleError(AMFObject &obj);
 
+            void SetPacketType(PacketPtr &packet);
+
             // ------------------------------- 数据接收部分 -------------------------------
             // RtmpHandShake 对象，用于管理和处理 RTMP 握手过程
             RtmpHandShake handshake_;
@@ -239,6 +244,9 @@ namespace lss
             
             // 标识当前 RTMP 连接是否作为播放器（false 表示发布者，true 表示播放器）
             bool is_player_{false};
+
+            // 存储所有命令
+            std::unordered_map<std::string, CommandFunc> commands_;
         };
 
         // 定义智能指针类型 RtmpContextPtr，用于管理 RtmpContext 对象的生命周期
