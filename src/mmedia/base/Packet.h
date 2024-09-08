@@ -121,13 +121,13 @@ namespace lss
         }
 
         // 设置时间戳
-        void SetTimestamp(uint64_t timestamp)
+        void SetTimeStamp(uint64_t timestamp)
         {
             timestamp_ = timestamp;
         }
 
         // 获取时间戳
-        uint64_t Timestamp() const
+        uint64_t TimeStamp() const
         {
             return timestamp_;
         }
