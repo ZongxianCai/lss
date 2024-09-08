@@ -194,7 +194,7 @@ bool EventLoop::EnableEventWriting(const EventPtr &event, bool enable)
     }
     else
     {
-        event->event_ |= ~kEventWrite;
+        event->event_ &= ~kEventWrite;
     }
 
     struct epoll_event ev;
@@ -226,7 +226,7 @@ bool EventLoop::EnableEventReading(const EventPtr &event, bool enable)
     }
     else
     {
-        event->event_ |= ~kEventRead;
+        event->event_ &= ~kEventRead;
     }
 
     struct epoll_event ev;
@@ -255,7 +255,7 @@ void EventLoop::AssertInLoopThread()
 // 检查当前线程是否是事件循环所在的线程
 bool EventLoop::IsInLoopThread() const
 {
-    return t_local_event_loop == this;
+    return this == t_local_event_loop;
 }
 
 // 确保函数在事件循环中按顺序执行，并且能够在不同线程间进行线程安全的调用
@@ -393,7 +393,7 @@ void EventLoop::RunFunctions()
     while (!functions_.empty())
     {
         // 获取队列中的第一个函数
-        auto &func = functions_.front();
+        const Func &func = functions_.front();
         // 调用该函数
         func();
         // 将已经执行过的函数任务从队列中移除
