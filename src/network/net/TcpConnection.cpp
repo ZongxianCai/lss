@@ -69,6 +69,8 @@ void TcpConnection::OnRead()
         return;
     }
 
+    ExtendLife();
+
     // 开始一个无限循环，直到手动中断
     while (true)
     {
@@ -142,6 +144,8 @@ void TcpConnection::OnWrite()
         // 直接返回，不再处理
         return;
     }
+
+    ExtendLife();
 
     // 检查待写入的数据列表是否为空
     if (!io_vec_list_.empty())
