@@ -191,7 +191,7 @@ int32_t AMFAny::EncodeNumber(char *output, double dVal)
     *p++ = kAMFNumber;
 
     // 将双精度浮点数 dVal 编码为 AMF 数字格式并写入缓冲区，更新指针位置
-    p += WriteNumber(output, dVal);
+    p += WriteNumber(p, dVal);
 
     // 返回写入缓冲区的总字节数
     return p - output;
