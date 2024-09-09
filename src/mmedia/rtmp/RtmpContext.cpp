@@ -11,6 +11,7 @@ RtmpContext::RtmpContext(const TcpConnectionPtr &conn, RtmpHandler *handler, boo
     : handshake_(conn, client)      // 初始化 handshake_ 对象，传入 TCP 连接和客户端标识
     , connection_(conn)             // 初始化 connection_ 成员，保存传入的 TCP 连接
     , rtmp_handler_(handler)        // 初始化 rtmp_handler_ 成员，保存传入的 RTMP 处理器指针
+    , is_client_(client)               // 初始化 is_client_ 成员，保存传入的客户端标识
 {
     // 绑定 "connect" 命令到 HandleConnect 函数，使用 std::bind 以便将 this 指针和第一个参数绑定到函数调用
     commands_["connect"] = std::bind(&RtmpContext::HandleConnect, this, std::placeholders::_1);
@@ -38,6 +39,12 @@ int32_t RtmpContext::Parse(MsgBuffer &buff)
     {
         // 调用握手处理函数
         ret = handshake_.HandShake(buff);
+
+        // 如果是客户端，发送连接命令
+        if (is_client_)
+        {
+            SendConnect();
+        }
 
         // 握手成功，状态切换到消息处理阶段
         if (ret == 0)
@@ -92,6 +99,12 @@ void RtmpContext::OnWriteComplete()
     else if (state_ == kRtmpWatingDone)
     {
         state_ = kRtmpMessage;
+
+        // 如果是客户端，发送连接命令
+        if (is_client_)
+        {
+            SendConnect();
+        }
     }
     // 消息处理阶段写入完成后的操作，不做处理
     else if (state_ == kRtmpMessage)
@@ -1901,18 +1914,20 @@ void RtmpContext::ParseNameAndTcUrl()
         app_ = list[4];    // 提取app部分
         name_ = list[5];   // 提取流名称部分
     }
-
-    // 如果domain仍为空且tc_url_的长度大于7（去掉"rtmp://"后的长度）
-    if (domain.empty() && tc_url_.size() > 7)
+    // 如果分割出的list有5个元素，说明格式可能为rmtp://domain:port/app/stream
+    else if (list.size() == 5) 
     {
-        // 查找从第7个字符开始的'/'或':'字符位置
-        auto pos = tc_url_.find_first_of(":/", 7);
+        domain = list[2];
+        app_ = list[3];
+        name_ = list[4];
+    }
 
-        // 如果找到，将域名部分提取出来
-        if (pos != std::string::npos)
-        {
-            domain = tc_url_.substr(7, pos);  // 提取域名部分
-        }
+    auto p = domain.find_first_of(":");
+
+    // 如果找到，将域名部分提取出来
+    if (pos != std::string::npos)
+    {
+        domain = tc_url_.substr(0, p);  // 提取域名部分
     }
 
     session_name_.clear();  // 清空session_name_，准备重新拼接
@@ -2029,6 +2044,14 @@ void RtmpContext::HandleResult(AMFObject &obj)
             SendPublish();
         }
     }
+    else if (id == 5)
+    {
+        // 如果有RTMP处理器，调用其OnPublishPrepare方法，通知开始发布流
+        if (rtmp_handler_)
+        {
+            rtmp_handler_->OnPublishPrepare(connection_);
+        }
+    }
 }
 
 void RtmpContext::HandleError(AMFObject &obj)
@@ -2041,4 +2064,20 @@ void RtmpContext::HandleError(AMFObject &obj)
     
     // 关闭与客户端的连接
     connection_->ForceClose();
+}
+
+void RtmpContext::Play(const std::string &url)
+{
+    is_client_ = true;
+    is_player_ = true;
+    tc_url_ = url;
+    ParseNameAndTcUrl();
+}
+
+void RtmpContext::Publish(const std::string &url)
+{
+    is_client_ = true;
+    is_player_ = false;
+    tc_url_ = url;
+    ParseNameAndTcUrl();
 }

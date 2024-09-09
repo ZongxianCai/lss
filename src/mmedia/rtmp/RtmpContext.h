@@ -70,6 +70,12 @@ namespace lss
             // 判断当前是否准备好发送数据
             bool Ready() const;
 
+            // 拉流函数，用于拉取指定的流
+            void Play(const std::string &url);
+
+            // 推流函数，用于发布指定的流
+            void Publish(const std::string &url);
+
             // 析构函数，使用默认析构行为
             ~RtmpContext() = default;
 
@@ -247,6 +253,9 @@ namespace lss
 
             // 存储所有命令
             std::unordered_map<std::string, CommandFunc> commands_;
+
+            // 判断是否为客户端
+            bool is_client_{false};
         };
 
         // 定义智能指针类型 RtmpContextPtr，用于管理 RtmpContext 对象的生命周期
