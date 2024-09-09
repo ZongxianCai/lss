@@ -1,5 +1,3 @@
-#include <openssl/sha.h>
-#include <openssl/hmac.h>
 #include <cstdint>
 #include <random>
 #include "RtmpHandShake.h"
@@ -462,13 +460,20 @@ int32_t RtmpHandShake::HandShake(MsgBuffer &buff)
                 // 如果缓冲区中正好还有 1536 字节的数据，表示 S2 数据包也已经接收完毕
                 if (buff.ReadableBytes() == 1536) //S2
                 {
+                    // 打印日志，记录接收到 S2 数据包的主机信息
+                    RTMP_TRACE << " host : " << connection_->PeerAddr().ToIpPort() << " , recv S2.\n";
+
                     // 更新状态为握手进行中
                     state_ = kHandShakeDoning;
+
+                    // 从缓冲区中移除已处理的 S2 数据包
+                    buff.Retrieve(1536);
+
                     // 发送 C2S2 数据包
                     SendC2S2();
 
-                    // 返回 2 表示握手成功
-                    return 2;
+                    // 返回 0 表示完成握手
+                    return 0;
                 }
                 else 
                 {
