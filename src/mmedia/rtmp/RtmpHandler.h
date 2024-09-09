@@ -33,6 +33,11 @@ namespace lss
             {
 
             }
+
+            virtual void OnPublishPrepare(const TcpConnectionPtr &conn)
+            {
+
+            }
         };
     }
 }
