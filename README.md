@@ -124,10 +124,13 @@ lss/
                 |-- RtmpHeader.h rtmp协议头设计
                 |-- RtmpContext.h
                 |-- RtmpContext.cpp rtmp数据包的接收，发送，控制消息和用户消息
+                |-- RtmpClient.h
+                |-- RtmpClient.cpp rtmp client的相关协议及数据传递
             |-- tests/
                 |-- HandShakeClientTest.cpp 客户端握手测试
                 |-- HandShakeServerTest.cpp 服务端握手测试
                 |-- RtmpServerTest.cpp rtmp server测试
+                |-- RtmpClientTest.cpp rtmp client测试
                 |-- CMakeLists.txt
         |-- main/
             |-- CMakeLists.txt 指定编译所需的依赖文件
@@ -718,3 +721,7 @@ C++的`三/五法则`：拷贝构造函数、拷贝赋值运算符、析构函�
 >   - **_error命令处理**：
 >       - 第二个属性为Transaction ID，标识是哪一个命令的结果；
 >       - 第四个对象中的description字符串描述出错的信息。
+> - **RtmpClient**：
+>   - RtmpClient使用TcpClient收发数据；
+>   - RtmpClient负责完成rtmp层面的功能，包括握手，调用RtmpContext解析rtmp协议数据；
+>   - RtmpClient分为两种：拉流Client和推流Client。
