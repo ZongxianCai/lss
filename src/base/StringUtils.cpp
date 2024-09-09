@@ -155,6 +155,11 @@ std::vector<std::string> StringUtils::SplitString(const string& s, const string&
             // 使用emplace_back()直接在容器末尾构造对象，避免额外的拷贝或移动操作(push_back需要传递一个已构造的对象)
             result.emplace_back(s.substr(last, next - last));
         }
+        else
+        {
+            // 没有找到，仅添加一个空字符串
+            result.emplace_back("");
+        }
         // 更新last，跳过已经处理的分隔符
         last = next + delimiter.size();
     }
