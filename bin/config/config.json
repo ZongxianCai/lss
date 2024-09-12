@@ -1,11 +1,25 @@
 {
-    "name": "lss server",
-    "cpu_start": 0,
-    "threads": 4,
-    "log": 
+    "name" : "lss server",
+    "cpu_start" : 0,
+    "threads" : 4,
+    "cpus" : 4,
+    "log" : 
     {
-        "level": "DEBUG",
-        "name": "lss.log",
-        "path": "../log/"
-    }
+        "level" : "TRACE",
+        "name" : "lss.log",
+        "path" : "../log/"
+    },
+    "services" :
+    [
+        {
+            "addr" : "0.0.0.0",
+            "port" : 1935,
+            "protocol": "rtmp",
+            "transport":"tcp"
+        }           
+    ],
+    "directory" : 
+    [
+        "../config/publish/"
+    ]
 }
