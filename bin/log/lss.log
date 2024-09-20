@@ -1,0 +1,291 @@
+2024-09-11T19:57:32 24920 TRACE [LiveService.cpp:195][Start]LIVE::eventloops size:4
+2024-09-11T19:57:32 24920 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T19:57:32 24920 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T19:57:32 24920 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T19:57:32 24920 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T20:01:41 25030 TRACE [LiveService.cpp:195][Start]LIVE::eventloops size:4
+2024-09-11T20:01:41 25030 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T20:01:41 25030 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T20:01:41 25030 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T20:01:41 25030 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T20:02:03 25031 TRACE [TcpServer.cpp:42][OnAccept] new connection fd : 22 host : 192.168.56.168:53778
+2024-09-11T20:02:04 25031 DEBUG [RtmpContext.cpp:1152][SendAckWindowSize] send act size : 2500000 to host : 192.168.56.168:53778
+2024-09-11T20:02:04 25031 DEBUG [RtmpContext.cpp:1191][SendSetPeerBandwidth] send bandwidth : 2500000 to host : 192.168.56.168:53778
+2024-09-11T20:02:04 25031 DEBUG [RtmpContext.cpp:1117][SendSetChunkSize] send chuck size : 4096 to host : 192.168.56.168:53778
+2024-09-11T20:02:04 25031 DEBUG [RtmpContext.cpp:1294][HandleChunkSize] recv chunk size in_chunk_size : 128 change to : 4096
+2024-09-11T20:02:04 25031 DEBUG [LiveService.cpp:152][OnPublish]LIVE::on publish session name:hx.com:1935/live/test param: host:192.168.56.168:53778 now:1726056124200
+2024-09-11T20:02:04 25031 ERROR [LiveService.cpp:37]create session failed. cant found config. domain:hx.com:1935 app:live
+2024-09-11T20:02:04 25031 ERROR [LiveService.cpp:159]create session failed.session name:hx.com:1935/live/test
+2024-09-11T20:02:04 25031 TRACE [TcpServer.cpp:80][OnConnectionClose] host : 192.168.56.168:53778 closed.
+2024-09-11T20:28:10 27762 TRACE [LiveService.cpp:195][Start]LIVE::eventloops size:4
+2024-09-11T20:28:10 27762 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T20:28:10 27762 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T20:28:10 27762 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T20:28:10 27762 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T20:28:13 27766 TRACE [TcpServer.cpp:42][OnAccept] new connection fd : 22 host : 192.168.56.168:53946
+2024-09-11T20:28:13 27766 DEBUG [RtmpContext.cpp:1152][SendAckWindowSize] send act size : 2500000 to host : 192.168.56.168:53946
+2024-09-11T20:28:13 27766 DEBUG [RtmpContext.cpp:1191][SendSetPeerBandwidth] send bandwidth : 2500000 to host : 192.168.56.168:53946
+2024-09-11T20:28:13 27766 DEBUG [RtmpContext.cpp:1117][SendSetChunkSize] send chuck size : 4096 to host : 192.168.56.168:53946
+2024-09-11T20:28:13 27766 DEBUG [RtmpContext.cpp:1294][HandleChunkSize] recv chunk size in_chunk_size : 128 change to : 4096
+2024-09-11T20:28:13 27766 DEBUG [LiveService.cpp:152][OnPublish]LIVE::on publish session name:hx.com/live/test param: host:192.168.56.168:53946 now:1726057693920
+2024-09-11T20:28:13 27766 DEBUG [LiveService.cpp:44][CreateSession]LIVE::create session success. session_name:hx.com/live/test now:1726057693920
+2024-09-11T20:28:13 27766 TRACE [CodecHeader.cpp:170][SaveVideoHeader]LIVE::save video header ,version:1,size:62 ,elapse:43ms
+
+2024-09-11T20:28:13 27766 TRACE [CodecHeader.cpp:159][SaveAudioHeader]LIVE::save audio header ,version:1,size:7 ,elapse:43ms
+
+2024-09-11T20:28:22 27766 TRACE [TcpServer.cpp:42][OnAccept] new connection fd : 23 host : 192.168.56.1:10905
+2024-09-11T20:28:22 27766 ERROR [AMFAny.cpp:66] not a Number.
+2024-09-11T20:28:22 27766 DEBUG [RtmpContext.cpp:1152][SendAckWindowSize] send act size : 2500000 to host : 192.168.56.1:10905
+2024-09-11T20:28:22 27766 DEBUG [RtmpContext.cpp:1191][SendSetPeerBandwidth] send bandwidth : 2500000 to host : 192.168.56.1:10905
+2024-09-11T20:28:22 27766 DEBUG [RtmpContext.cpp:1117][SendSetChunkSize] send chuck size : 4096 to host : 192.168.56.1:10905
+2024-09-11T20:28:22 27766 DEBUG [RtmpContext.cpp:1315][HandleAckWindowSize] recv ack window size ack_size_ : 2500000 change to : 2500000
+2024-09-11T20:28:22 27766 DEBUG [RtmpContext.cpp:1279][SendUserCtrlMessage] send user control type : 0 value : 1 value2 : 0 to host : 192.168.56.1:10905
+2024-09-11T20:28:22 27766 DEBUG [LiveService.cpp:126][OnPlay]LIVE::on play session name:hx.com/live/test param: host:192.168.56.1:10905 now:1726057702702
+2024-09-11T20:28:22 27766 DEBUG [Session.cpp:151][AddPlayer]LIVE:: add player,session name:hx.com/live/test,user:192.168.56.1:10905
+2024-09-11T20:28:22 27766 DEBUG [Stream.cpp:229][LocateGop]LIVE::locate GOP sucess.elapsed:1ms,gop idx:643,frame index:677,lantency:447,user:192.168.56.1:10905
+2024-09-11T20:28:22 27766 INFO [RtmpPlayerUser.cpp:35]LIVE::rtmp sent audio_header now:1726057702703 host:192.168.56.1:10905
+2024-09-11T20:28:22 27766 INFO [RtmpPlayerUser.cpp:44]LIVE::rtmp sent video_header now:1726057702703 host:192.168.56.1:10905
+2024-09-11T20:28:46 27766 ERROR [AMFAny.cpp:66] not a Number.
+2024-09-11T20:29:22 27766 ERROR [TcpConnection.cpp:365] host : 192.168.56.1:10905 timeout and close it.
+2024-09-11T20:29:22 27766 TRACE [TcpServer.cpp:80][OnConnectionClose] host : 192.168.56.1:10905 closed.
+2024-09-11T20:29:22 27766 DEBUG [Session.cpp:113][CloseUser]LIVE::remove publisher,session name:hx.com/live/test,user:192.168.56.1:10905,elapsed:60289,ReadyTime:-519092399,stream time:69071
+2024-09-11T20:31:06 27766 TRACE [TcpServer.cpp:80][OnConnectionClose] host : 192.168.56.168:53946 closed.
+2024-09-11T20:31:26 27762 INFO [LiveService.cpp:83]LIVE::session:hx.com/live/test is timeout. close it. Now:1726057886337
+2024-09-11T20:31:37 27766 ERROR [TcpConnection.cpp:365] host : 192.168.56.168:53946 timeout and close it.
+2024-09-11T20:53:19 28059 TRACE [LiveService.cpp:195][Start]LIVE::eventloops size:4
+2024-09-11T20:53:19 28059 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T20:53:19 28059 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T20:53:19 28059 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T20:53:19 28059 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T20:53:23 28061 TRACE [TcpServer.cpp:42][OnAccept] new connection fd : 22 host : 192.168.56.168:53974
+2024-09-11T20:53:23 28061 DEBUG [RtmpContext.cpp:1152][SendAckWindowSize] send act size : 2500000 to host : 192.168.56.168:53974
+2024-09-11T20:53:23 28061 DEBUG [RtmpContext.cpp:1191][SendSetPeerBandwidth] send bandwidth : 2500000 to host : 192.168.56.168:53974
+2024-09-11T20:53:23 28061 DEBUG [RtmpContext.cpp:1117][SendSetChunkSize] send chuck size : 4096 to host : 192.168.56.168:53974
+2024-09-11T20:53:24 28061 DEBUG [RtmpContext.cpp:1294][HandleChunkSize] recv chunk size in_chunk_size : 128 change to : 4096
+2024-09-11T20:53:24 28061 DEBUG [LiveService.cpp:152][OnPublish]LIVE::on publish session name:hx.com/live/test param: host:192.168.56.168:53974 now:1726059204057
+2024-09-11T20:53:24 28061 DEBUG [LiveService.cpp:44][CreateSession]LIVE::create session success. session_name:hx.com/live/test now:1726059204057
+2024-09-11T20:53:24 28061 TRACE [CodecHeader.cpp:170][SaveVideoHeader]LIVE::save video header ,version:1,size:62 ,elapse:42ms
+
+2024-09-11T20:53:24 28061 TRACE [CodecHeader.cpp:159][SaveAudioHeader]LIVE::save audio header ,version:1,size:7 ,elapse:42ms
+
+2024-09-11T20:53:36 28060 TRACE [TcpServer.cpp:42][OnAccept] new connection fd : 23 host : 192.168.56.1:11541
+2024-09-11T20:53:37 28060 ERROR [AMFAny.cpp:66] not a Number.
+2024-09-11T20:53:37 28060 DEBUG [RtmpContext.cpp:1152][SendAckWindowSize] send act size : 2500000 to host : 192.168.56.1:11541
+2024-09-11T20:53:37 28060 DEBUG [RtmpContext.cpp:1191][SendSetPeerBandwidth] send bandwidth : 2500000 to host : 192.168.56.1:11541
+2024-09-11T20:53:37 28060 DEBUG [RtmpContext.cpp:1117][SendSetChunkSize] send chuck size : 4096 to host : 192.168.56.1:11541
+2024-09-11T20:53:37 28060 DEBUG [RtmpContext.cpp:1315][HandleAckWindowSize] recv ack window size ack_size_ : 2500000 change to : 2500000
+2024-09-11T20:53:37 28060 DEBUG [RtmpContext.cpp:1279][SendUserCtrlMessage] send user control type : 0 value : 1 value2 : 0 to host : 192.168.56.1:11541
+2024-09-11T20:53:37 28060 DEBUG [LiveService.cpp:126][OnPlay]LIVE::on play session name:hx.com/live/test param: host:192.168.56.1:11541 now:1726059217380
+2024-09-11T20:53:37 28060 DEBUG [Session.cpp:151][AddPlayer]LIVE:: add player,session name:hx.com/live/test,user:192.168.56.1:11541
+2024-09-11T20:53:38 28060 DEBUG [Stream.cpp:168][LocateGop]LIVE::wait Gop keyframe timeout. host:192.168.56.1:11541
+2024-09-11T20:53:40 28060 DEBUG [Stream.cpp:229][LocateGop]LIVE::locate GOP sucess.elapsed:3352ms,gop idx:1283,frame index:1285,lantency:28,user:192.168.56.1:11541
+2024-09-11T20:53:40 28060 INFO [RtmpPlayerUser.cpp:35]LIVE::rtmp sent audio_header now:1726059220733 host:192.168.56.1:11541
+2024-09-11T20:53:40 28060 INFO [RtmpPlayerUser.cpp:44]LIVE::rtmp sent video_header now:1726059220736 host:192.168.56.1:11541
+2024-09-11T20:56:16 28061 TRACE [TcpServer.cpp:80][OnConnectionClose] host : 192.168.56.168:53974 closed.
+2024-09-11T20:56:16 28061 DEBUG [Session.cpp:113][CloseUser]LIVE::remove publisher,session name:hx.com/live/test,user:192.168.56.168:53974,elapsed:172391,ReadyTime:-517476543,stream time:172392
+2024-09-11T20:56:41 28059 INFO [LiveService.cpp:83]LIVE::session:hx.com/live/test is timeout. close it. Now:1726059401114
+2024-09-11T20:56:46 28061 ERROR [TcpConnection.cpp:365] host : 192.168.56.168:53974 timeout and close it.
+2024-09-11T20:56:47 28060 ERROR [TcpConnection.cpp:365] host : 192.168.56.1:11541 timeout and close it.
+2024-09-11T20:56:47 28060 TRACE [TcpServer.cpp:80][OnConnectionClose] host : 192.168.56.1:11541 closed.
+2024-09-11T20:57:14 28060 TRACE [TcpServer.cpp:42][OnAccept] new connection fd : 22 host : 192.168.56.168:53980
+2024-09-11T20:57:15 28060 DEBUG [RtmpContext.cpp:1152][SendAckWindowSize] send act size : 2500000 to host : 192.168.56.168:53980
+2024-09-11T20:57:15 28060 DEBUG [RtmpContext.cpp:1191][SendSetPeerBandwidth] send bandwidth : 2500000 to host : 192.168.56.168:53980
+2024-09-11T20:57:15 28060 DEBUG [RtmpContext.cpp:1117][SendSetChunkSize] send chuck size : 4096 to host : 192.168.56.168:53980
+2024-09-11T20:57:15 28060 DEBUG [RtmpContext.cpp:1294][HandleChunkSize] recv chunk size in_chunk_size : 128 change to : 4096
+2024-09-11T20:57:15 28060 DEBUG [LiveService.cpp:152][OnPublish]LIVE::on publish session name:hx.com/live/test param: host:192.168.56.168:53980 now:1726059435349
+2024-09-11T20:57:15 28060 DEBUG [LiveService.cpp:44][CreateSession]LIVE::create session success. session_name:hx.com/live/test now:1726059435350
+2024-09-11T20:57:15 28060 TRACE [CodecHeader.cpp:170][SaveVideoHeader]LIVE::save video header ,version:1,size:62 ,elapse:44ms
+
+2024-09-11T20:57:15 28060 TRACE [CodecHeader.cpp:159][SaveAudioHeader]LIVE::save audio header ,version:1,size:7 ,elapse:44ms
+
+2024-09-11T20:57:19 28060 TRACE [TcpServer.cpp:42][OnAccept] new connection fd : 23 host : 192.168.56.1:11619
+2024-09-11T20:57:20 28060 ERROR [AMFAny.cpp:66] not a Number.
+2024-09-11T20:57:20 28060 DEBUG [RtmpContext.cpp:1152][SendAckWindowSize] send act size : 2500000 to host : 192.168.56.1:11619
+2024-09-11T20:57:20 28060 DEBUG [RtmpContext.cpp:1191][SendSetPeerBandwidth] send bandwidth : 2500000 to host : 192.168.56.1:11619
+2024-09-11T20:57:20 28060 DEBUG [RtmpContext.cpp:1117][SendSetChunkSize] send chuck size : 4096 to host : 192.168.56.1:11619
+2024-09-11T20:57:20 28060 DEBUG [RtmpContext.cpp:1315][HandleAckWindowSize] recv ack window size ack_size_ : 2500000 change to : 2500000
+2024-09-11T20:57:20 28060 DEBUG [RtmpContext.cpp:1279][SendUserCtrlMessage] send user control type : 0 value : 1 value2 : 0 to host : 192.168.56.1:11619
+2024-09-11T20:57:20 28060 DEBUG [LiveService.cpp:126][OnPlay]LIVE::on play session name:hx.com/live/test param: host:192.168.56.1:11619 now:1726059440264
+2024-09-11T20:57:20 28060 DEBUG [Session.cpp:151][AddPlayer]LIVE:: add player,session name:hx.com/live/test,user:192.168.56.1:11619
+2024-09-11T20:57:21 28060 DEBUG [Stream.cpp:168][LocateGop]LIVE::wait Gop keyframe timeout. host:192.168.56.1:11619
+2024-09-11T20:57:23 28060 DEBUG [Stream.cpp:229][LocateGop]LIVE::locate GOP sucess.elapsed:3456ms,gop idx:643,frame index:645,lantency:33,user:192.168.56.1:11619
+2024-09-11T20:57:23 28060 INFO [RtmpPlayerUser.cpp:35]LIVE::rtmp sent audio_header now:1726059443722 host:192.168.56.1:11619
+2024-09-11T20:57:23 28060 INFO [RtmpPlayerUser.cpp:44]LIVE::rtmp sent video_header now:1726059443724 host:192.168.56.1:11619
+2024-09-11T20:57:25 28060 ERROR [AMFAny.cpp:66] not a Number.
+2024-09-11T20:57:31 28060 ERROR [AMFAny.cpp:66] not a Number.
+2024-09-11T20:57:50 28060 TRACE [TcpServer.cpp:80][OnConnectionClose] host : 192.168.56.1:11619 closed.
+2024-09-11T20:57:50 28060 DEBUG [Session.cpp:113][CloseUser]LIVE::remove publisher,session name:hx.com/live/test,user:192.168.56.1:11619,elapsed:30676,ReadyTime:-517384304,stream time:35592
+2024-09-11T22:42:56 28807 TRACE [LiveService.cpp:195][Start]LIVE::eventloops size:4
+2024-09-11T22:42:56 28807 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T22:42:56 28807 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T22:42:56 28807 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T22:42:56 28807 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T22:43:36 28853 TRACE [LiveService.cpp:195][Start]LIVE::eventloops size:4
+2024-09-11T22:43:36 28853 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T22:43:36 28853 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T22:43:36 28853 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T22:43:36 28853 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T22:43:41 28856 TRACE [TcpServer.cpp:42][OnAccept] new connection fd : 22 host : 192.168.56.168:54006
+2024-09-11T22:43:41 28856 DEBUG [RtmpContext.cpp:1152][SendAckWindowSize] send act size : 2500000 to host : 192.168.56.168:54006
+2024-09-11T22:43:41 28856 DEBUG [RtmpContext.cpp:1191][SendSetPeerBandwidth] send bandwidth : 2500000 to host : 192.168.56.168:54006
+2024-09-11T22:43:41 28856 DEBUG [RtmpContext.cpp:1117][SendSetChunkSize] send chuck size : 4096 to host : 192.168.56.168:54006
+2024-09-11T22:43:41 28856 DEBUG [RtmpContext.cpp:1294][HandleChunkSize] recv chunk size in_chunk_size : 128 change to : 4096
+2024-09-11T22:43:41 28856 DEBUG [LiveService.cpp:152][OnPublish]LIVE::on publish session name:hx.com/live/test param: host:192.168.56.168:54006 now:1726065821750
+2024-09-11T22:43:41 28856 DEBUG [LiveService.cpp:44][CreateSession]LIVE::create session success. session_name:hx.com/live/test now:1726065821751
+2024-09-11T22:43:41 28856 TRACE [CodecHeader.cpp:170][SaveVideoHeader]LIVE::save video header ,version:1,size:62 ,elapse:41ms
+
+2024-09-11T22:43:41 28856 TRACE [CodecHeader.cpp:159][SaveAudioHeader]LIVE::save audio header ,version:1,size:7 ,elapse:41ms
+
+2024-09-11T22:43:55 28856 TRACE [TcpServer.cpp:42][OnAccept] new connection fd : 23 host : 192.168.56.1:14058
+2024-09-11T22:43:55 28856 ERROR [AMFAny.cpp:66] not a Number.
+2024-09-11T22:43:55 28856 DEBUG [RtmpContext.cpp:1152][SendAckWindowSize] send act size : 2500000 to host : 192.168.56.1:14058
+2024-09-11T22:43:55 28856 DEBUG [RtmpContext.cpp:1191][SendSetPeerBandwidth] send bandwidth : 2500000 to host : 192.168.56.1:14058
+2024-09-11T22:43:55 28856 DEBUG [RtmpContext.cpp:1117][SendSetChunkSize] send chuck size : 4096 to host : 192.168.56.1:14058
+2024-09-11T22:43:55 28856 DEBUG [RtmpContext.cpp:1315][HandleAckWindowSize] recv ack window size ack_size_ : 2500000 change to : 2500000
+2024-09-11T22:43:55 28856 DEBUG [RtmpContext.cpp:1279][SendUserCtrlMessage] send user control type : 0 value : 1 value2 : 0 to host : 192.168.56.1:14058
+2024-09-11T22:43:55 28856 DEBUG [LiveService.cpp:126][OnPlay]LIVE::on play session name:hx.com/live/test param: host:192.168.56.1:14058 now:1726065835485
+2024-09-11T22:43:55 28856 DEBUG [Session.cpp:151][AddPlayer]LIVE:: add player,session name:hx.com/live/test,user:192.168.56.1:14058
+2024-09-11T22:43:56 28856 DEBUG [Stream.cpp:168][LocateGop]LIVE::wait Gop keyframe timeout. host:192.168.56.1:14058
+2024-09-11T22:43:58 28856 DEBUG [Stream.cpp:229][LocateGop]LIVE::locate GOP sucess.elapsed:2940ms,gop idx:1283,frame index:1285,lantency:28,user:192.168.56.1:14058
+2024-09-11T22:43:58 28856 INFO [RtmpPlayerUser.cpp:35]LIVE::rtmp sent audio_header now:1726065838425 host:192.168.56.1:14058
+2024-09-11T22:43:58 28856 INFO [RtmpPlayerUser.cpp:44]LIVE::rtmp sent video_header now:1726065838425 host:192.168.56.1:14058
+2024-09-11T22:44:45 28856 ERROR [TcpConnection.cpp:365] host : 192.168.56.1:14058 timeout and close it.
+2024-09-11T22:44:45 28856 TRACE [TcpServer.cpp:80][OnConnectionClose] host : 192.168.56.1:14058 closed.
+2024-09-11T22:44:45 28856 DEBUG [Session.cpp:113][CloseUser]LIVE::remove publisher,session name:hx.com/live/test,user:192.168.56.1:14058,elapsed:49645,ReadyTime:-510972904,stream time:63379
+2024-09-11T22:46:34 28856 TRACE [TcpServer.cpp:80][OnConnectionClose] host : 192.168.56.168:54006 closed.
+2024-09-11T22:46:57 28853 INFO [LiveService.cpp:83]LIVE::session:hx.com/live/test is timeout. close it. Now:1726066017215
+2024-09-11T22:47:05 28856 ERROR [TcpConnection.cpp:365] host : 192.168.56.168:54006 timeout and close it.
+2024-09-11T22:50:58 30685 TRACE [LiveService.cpp:195][Start]LIVE::eventloops size:4
+2024-09-11T22:50:58 30685 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T22:50:58 30685 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T22:50:58 30685 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T22:50:58 30685 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T22:51:03 30689 TRACE [TcpServer.cpp:42][OnAccept] new connection fd : 22 host : 192.168.56.168:54036
+2024-09-11T22:51:03 30689 DEBUG [RtmpContext.cpp:1152][SendAckWindowSize] send act size : 2500000 to host : 192.168.56.168:54036
+2024-09-11T22:51:03 30689 DEBUG [RtmpContext.cpp:1191][SendSetPeerBandwidth] send bandwidth : 2500000 to host : 192.168.56.168:54036
+2024-09-11T22:51:03 30689 DEBUG [RtmpContext.cpp:1117][SendSetChunkSize] send chuck size : 4096 to host : 192.168.56.168:54036
+2024-09-11T22:51:03 30689 DEBUG [RtmpContext.cpp:1294][HandleChunkSize] recv chunk size in_chunk_size : 128 change to : 4096
+2024-09-11T22:51:03 30689 DEBUG [LiveService.cpp:152][OnPublish]LIVE::on publish session name:hx.com/live/test param: host:192.168.56.168:54036 now:1726066263663
+2024-09-11T22:51:03 30689 DEBUG [LiveService.cpp:44][CreateSession]LIVE::create session success. session_name:hx.com/live/test now:1726066263664
+2024-09-11T22:51:03 30689 TRACE [CodecHeader.cpp:170][SaveVideoHeader]LIVE::save video header ,version:1,size:62 ,elapse:41ms
+
+2024-09-11T22:51:03 30689 TRACE [CodecHeader.cpp:159][SaveAudioHeader]LIVE::save audio header ,version:1,size:7 ,elapse:42ms
+
+2024-09-11T22:51:15 30687 TRACE [TcpServer.cpp:42][OnAccept] new connection fd : 23 host : 192.168.56.1:14314
+2024-09-11T22:51:16 30687 ERROR [AMFAny.cpp:66] not a Number.
+2024-09-11T22:51:16 30687 DEBUG [RtmpContext.cpp:1152][SendAckWindowSize] send act size : 2500000 to host : 192.168.56.1:14314
+2024-09-11T22:51:16 30687 DEBUG [RtmpContext.cpp:1191][SendSetPeerBandwidth] send bandwidth : 2500000 to host : 192.168.56.1:14314
+2024-09-11T22:51:16 30687 DEBUG [RtmpContext.cpp:1117][SendSetChunkSize] send chuck size : 4096 to host : 192.168.56.1:14314
+2024-09-11T22:51:16 30687 DEBUG [RtmpContext.cpp:1315][HandleAckWindowSize] recv ack window size ack_size_ : 2500000 change to : 2500000
+2024-09-11T22:51:16 30687 DEBUG [RtmpContext.cpp:1279][SendUserCtrlMessage] send user control type : 0 value : 1 value2 : 0 to host : 192.168.56.1:14314
+2024-09-11T22:51:16 30687 DEBUG [LiveService.cpp:126][OnPlay]LIVE::on play session name:hx.com/live/test param: host:192.168.56.1:14314 now:1726066276351
+2024-09-11T22:51:16 30687 DEBUG [Session.cpp:151][AddPlayer]LIVE:: add player,session name:hx.com/live/test,user:192.168.56.1:14314
+2024-09-11T22:51:17 30687 DEBUG [Stream.cpp:168][LocateGop]LIVE::wait Gop keyframe timeout. host:192.168.56.1:14314
+2024-09-11T22:51:20 30687 DEBUG [Stream.cpp:229][LocateGop]LIVE::locate GOP sucess.elapsed:3983ms,gop idx:1283,frame index:1285,lantency:28,user:192.168.56.1:14314
+2024-09-11T22:51:20 30687 INFO [RtmpPlayerUser.cpp:35]LIVE::rtmp sent audio_header now:1726066280334 host:192.168.56.1:14314
+2024-09-11T22:51:20 30687 INFO [RtmpPlayerUser.cpp:44]LIVE::rtmp sent video_header now:1726066280335 host:192.168.56.1:14314
+2024-09-11T22:51:53 30687 ERROR [TcpConnection.cpp:132] host : 192.168.56.1:14314 error msg : Connection reset by peer
+2024-09-11T22:51:53 30687 TRACE [TcpServer.cpp:80][OnConnectionClose] host : 192.168.56.1:14314 closed.
+2024-09-11T22:51:53 30687 DEBUG [Session.cpp:113][CloseUser]LIVE::remove publisher,session name:hx.com/live/test,user:192.168.56.1:14314,elapsed:37263,ReadyTime:-510547654,stream time:49950
+2024-09-11T22:51:56 30689 TRACE [TcpServer.cpp:80][OnConnectionClose] host : 192.168.56.168:54036 closed.
+2024-09-11T22:57:19 32500 TRACE [LiveService.cpp:195][Start]LIVE::eventloops size:4
+2024-09-11T22:57:19 32500 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T22:57:19 32500 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T22:57:19 32500 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T22:57:19 32500 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T22:58:11 32569 TRACE [LiveService.cpp:195][Start]LIVE::eventloops size:4
+2024-09-11T22:58:11 32569 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T22:58:11 32569 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T22:58:11 32569 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T22:58:11 32569 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T22:58:19 32573 TRACE [TcpServer.cpp:42][OnAccept] new connection fd : 22 host : 192.168.56.168:54056
+2024-09-11T22:58:19 32573 DEBUG [RtmpContext.cpp:1152][SendAckWindowSize] send act size : 2500000 to host : 192.168.56.168:54056
+2024-09-11T22:58:19 32573 DEBUG [RtmpContext.cpp:1191][SendSetPeerBandwidth] send bandwidth : 2500000 to host : 192.168.56.168:54056
+2024-09-11T22:58:19 32573 DEBUG [RtmpContext.cpp:1117][SendSetChunkSize] send chuck size : 4096 to host : 192.168.56.168:54056
+2024-09-11T22:58:19 32573 DEBUG [RtmpContext.cpp:1294][HandleChunkSize] recv chunk size in_chunk_size : 128 change to : 4096
+2024-09-11T22:58:19 32573 DEBUG [LiveService.cpp:152][OnPublish]LIVE::on publish session name:czx.com/live/test param: host:192.168.56.168:54056 now:1726066699561
+2024-09-11T22:58:19 32573 DEBUG [LiveService.cpp:44][CreateSession]LIVE::create session success. session_name:czx.com/live/test now:1726066699561
+2024-09-11T22:58:19 32573 TRACE [CodecHeader.cpp:170][SaveVideoHeader]LIVE::save video header ,version:1,size:62 ,elapse:43ms
+
+2024-09-11T22:58:19 32573 TRACE [CodecHeader.cpp:159][SaveAudioHeader]LIVE::save audio header ,version:1,size:7 ,elapse:43ms
+
+2024-09-11T22:58:24 32570 TRACE [TcpServer.cpp:42][OnAccept] new connection fd : 23 host : 192.168.56.1:14498
+2024-09-11T22:58:24 32570 ERROR [AMFAny.cpp:66] not a Number.
+2024-09-11T22:58:24 32570 DEBUG [RtmpContext.cpp:1152][SendAckWindowSize] send act size : 2500000 to host : 192.168.56.1:14498
+2024-09-11T22:58:24 32570 DEBUG [RtmpContext.cpp:1191][SendSetPeerBandwidth] send bandwidth : 2500000 to host : 192.168.56.1:14498
+2024-09-11T22:58:24 32570 DEBUG [RtmpContext.cpp:1117][SendSetChunkSize] send chuck size : 4096 to host : 192.168.56.1:14498
+2024-09-11T22:58:24 32570 DEBUG [RtmpContext.cpp:1315][HandleAckWindowSize] recv ack window size ack_size_ : 2500000 change to : 2500000
+2024-09-11T22:58:24 32570 DEBUG [RtmpContext.cpp:1279][SendUserCtrlMessage] send user control type : 0 value : 1 value2 : 0 to host : 192.168.56.1:14498
+2024-09-11T22:58:24 32570 DEBUG [LiveService.cpp:126][OnPlay]LIVE::on play session name:czx.com/live/test param: host:192.168.56.1:14498 now:1726066704891
+2024-09-11T22:58:24 32570 DEBUG [Session.cpp:151][AddPlayer]LIVE:: add player,session name:czx.com/live/test,user:192.168.56.1:14498
+2024-09-11T22:58:25 32570 DEBUG [Stream.cpp:168][LocateGop]LIVE::wait Gop keyframe timeout. host:192.168.56.1:14498
+2024-09-11T22:58:27 32570 DEBUG [Stream.cpp:229][LocateGop]LIVE::locate GOP sucess.elapsed:3042ms,gop idx:643,frame index:647,lantency:63,user:192.168.56.1:14498
+2024-09-11T22:58:27 32570 INFO [RtmpPlayerUser.cpp:35]LIVE::rtmp sent audio_header now:1726066707933 host:192.168.56.1:14498
+2024-09-11T22:58:27 32570 INFO [RtmpPlayerUser.cpp:44]LIVE::rtmp sent video_header now:1726066707934 host:192.168.56.1:14498
+2024-09-11T22:58:50 32570 ERROR [TcpConnection.cpp:132] host : 192.168.56.1:14498 error msg : Connection reset by peer
+2024-09-11T22:58:50 32570 TRACE [TcpServer.cpp:80][OnConnectionClose] host : 192.168.56.1:14498 closed.
+2024-09-11T22:58:50 32570 DEBUG [Session.cpp:113][CloseUser]LIVE::remove publisher,session name:czx.com/live/test,user:192.168.56.1:14498,elapsed:25472,ReadyTime:-510128424,stream time:30802
+2024-09-11T22:59:09 32710 TRACE [LiveService.cpp:195][Start]LIVE::eventloops size:4
+2024-09-11T22:59:09 32710 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T22:59:09 32710 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T22:59:09 32710 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T22:59:09 32710 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T22:59:14 32712 TRACE [TcpServer.cpp:42][OnAccept] new connection fd : 22 host : 192.168.56.168:54058
+2024-09-11T22:59:15 32712 DEBUG [RtmpContext.cpp:1152][SendAckWindowSize] send act size : 2500000 to host : 192.168.56.168:54058
+2024-09-11T22:59:15 32712 DEBUG [RtmpContext.cpp:1191][SendSetPeerBandwidth] send bandwidth : 2500000 to host : 192.168.56.168:54058
+2024-09-11T22:59:15 32712 DEBUG [RtmpContext.cpp:1117][SendSetChunkSize] send chuck size : 4096 to host : 192.168.56.168:54058
+2024-09-11T22:59:15 32712 DEBUG [RtmpContext.cpp:1294][HandleChunkSize] recv chunk size in_chunk_size : 128 change to : 4096
+2024-09-11T22:59:15 32712 DEBUG [LiveService.cpp:152][OnPublish]LIVE::on publish session name:czx.com/live/test param: host:192.168.56.168:54058 now:1726066755397
+2024-09-11T22:59:15 32712 DEBUG [LiveService.cpp:44][CreateSession]LIVE::create session success. session_name:czx.com/live/test now:1726066755397
+2024-09-11T22:59:15 32712 TRACE [CodecHeader.cpp:170][SaveVideoHeader]LIVE::save video header ,version:1,size:62 ,elapse:41ms
+
+2024-09-11T22:59:15 32712 TRACE [CodecHeader.cpp:159][SaveAudioHeader]LIVE::save audio header ,version:1,size:7 ,elapse:41ms
+
+2024-09-11T22:59:31 32712 TRACE [TcpServer.cpp:42][OnAccept] new connection fd : 23 host : 192.168.56.1:14527
+2024-09-11T22:59:31 32712 ERROR [AMFAny.cpp:66] not a Number.
+2024-09-11T22:59:31 32712 DEBUG [RtmpContext.cpp:1152][SendAckWindowSize] send act size : 2500000 to host : 192.168.56.1:14527
+2024-09-11T22:59:31 32712 DEBUG [RtmpContext.cpp:1191][SendSetPeerBandwidth] send bandwidth : 2500000 to host : 192.168.56.1:14527
+2024-09-11T22:59:31 32712 DEBUG [RtmpContext.cpp:1117][SendSetChunkSize] send chuck size : 4096 to host : 192.168.56.1:14527
+2024-09-11T22:59:31 32712 DEBUG [RtmpContext.cpp:1315][HandleAckWindowSize] recv ack window size ack_size_ : 2500000 change to : 2500000
+2024-09-11T22:59:32 32712 DEBUG [RtmpContext.cpp:1279][SendUserCtrlMessage] send user control type : 0 value : 1 value2 : 0 to host : 192.168.56.1:14527
+2024-09-11T22:59:32 32712 DEBUG [LiveService.cpp:126][OnPlay]LIVE::on play session name:czx.com/live/test param: host:192.168.56.1:14527 now:1726066772021
+2024-09-11T22:59:32 32712 DEBUG [Session.cpp:151][AddPlayer]LIVE:: add player,session name:czx.com/live/test,user:192.168.56.1:14527
+2024-09-11T22:59:32 32712 DEBUG [Stream.cpp:229][LocateGop]LIVE::locate GOP sucess.elapsed:52ms,gop idx:1283,frame index:1285,lantency:28,user:192.168.56.1:14527
+2024-09-11T22:59:32 32712 INFO [RtmpPlayerUser.cpp:35]LIVE::rtmp sent audio_header now:1726066772074 host:192.168.56.1:14527
+2024-09-11T22:59:32 32712 INFO [RtmpPlayerUser.cpp:44]LIVE::rtmp sent video_header now:1726066772074 host:192.168.56.1:14527
+2024-09-11T23:00:18 32712 ERROR [TcpConnection.cpp:365] host : 192.168.56.1:14527 timeout and close it.
+2024-09-11T23:00:18 32712 TRACE [TcpServer.cpp:80][OnConnectionClose] host : 192.168.56.1:14527 closed.
+2024-09-11T23:00:18 32712 DEBUG [Session.cpp:113][CloseUser]LIVE::remove publisher,session name:czx.com/live/test,user:192.168.56.1:14527,elapsed:46652,ReadyTime:-510039251,stream time:63276
+2024-09-11T23:00:58 404 TRACE [LiveService.cpp:195][Start]LIVE::eventloops size:4
+2024-09-11T23:00:58 404 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T23:00:58 404 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T23:00:58 404 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T23:00:58 404 DEBUG [RtmpServer.cpp:36][Start] RtmpServer Start.
+2024-09-11T23:01:03 408 TRACE [TcpServer.cpp:42][OnAccept] new connection fd : 22 host : 192.168.56.168:54060
+2024-09-11T23:01:03 408 DEBUG [RtmpContext.cpp:1152][SendAckWindowSize] send act size : 2500000 to host : 192.168.56.168:54060
+2024-09-11T23:01:03 408 DEBUG [RtmpContext.cpp:1191][SendSetPeerBandwidth] send bandwidth : 2500000 to host : 192.168.56.168:54060
+2024-09-11T23:01:03 408 DEBUG [RtmpContext.cpp:1117][SendSetChunkSize] send chuck size : 4096 to host : 192.168.56.168:54060
+2024-09-11T23:01:03 408 DEBUG [RtmpContext.cpp:1294][HandleChunkSize] recv chunk size in_chunk_size : 128 change to : 4096
+2024-09-11T23:01:03 408 DEBUG [LiveService.cpp:152][OnPublish]LIVE::on publish session name:czx.com/live/test param: host:192.168.56.168:54060 now:1726066863839
+2024-09-11T23:01:03 408 DEBUG [LiveService.cpp:44][CreateSession]LIVE::create session success. session_name:czx.com/live/test now:1726066863840
+2024-09-11T23:01:03 408 TRACE [CodecHeader.cpp:170][SaveVideoHeader]LIVE::save video header ,version:1,size:62 ,elapse:43ms
+
+2024-09-11T23:01:03 408 TRACE [CodecHeader.cpp:159][SaveAudioHeader]LIVE::save audio header ,version:1,size:7 ,elapse:43ms
+
+2024-09-11T23:01:07 408 TRACE [TcpServer.cpp:42][OnAccept] new connection fd : 23 host : 192.168.56.1:14564
+2024-09-11T23:01:08 408 ERROR [AMFAny.cpp:66] not a Number.
+2024-09-11T23:01:08 408 DEBUG [RtmpContext.cpp:1152][SendAckWindowSize] send act size : 2500000 to host : 192.168.56.1:14564
+2024-09-11T23:01:08 408 DEBUG [RtmpContext.cpp:1191][SendSetPeerBandwidth] send bandwidth : 2500000 to host : 192.168.56.1:14564
+2024-09-11T23:01:08 408 DEBUG [RtmpContext.cpp:1117][SendSetChunkSize] send chuck size : 4096 to host : 192.168.56.1:14564
+2024-09-11T23:01:08 408 DEBUG [RtmpContext.cpp:1315][HandleAckWindowSize] recv ack window size ack_size_ : 2500000 change to : 2500000
+2024-09-11T23:01:08 408 DEBUG [RtmpContext.cpp:1279][SendUserCtrlMessage] send user control type : 0 value : 1 value2 : 0 to host : 192.168.56.1:14564
+2024-09-11T23:01:08 408 DEBUG [LiveService.cpp:126][OnPlay]LIVE::on play session name:czx.com/live/test param: host:192.168.56.1:14564 now:1726066868239
+2024-09-11T23:01:08 408 DEBUG [Session.cpp:151][AddPlayer]LIVE:: add player,session name:czx.com/live/test,user:192.168.56.1:14564
+2024-09-11T23:01:09 408 DEBUG [Stream.cpp:168][LocateGop]LIVE::wait Gop keyframe timeout. host:192.168.56.1:14564
+2024-09-11T23:01:12 408 DEBUG [Stream.cpp:229][LocateGop]LIVE::locate GOP sucess.elapsed:3970ms,gop idx:643,frame index:645,lantency:33,user:192.168.56.1:14564
+2024-09-11T23:01:12 408 INFO [RtmpPlayerUser.cpp:35]LIVE::rtmp sent audio_header now:1726066872210 host:192.168.56.1:14564
+2024-09-11T23:01:12 408 INFO [RtmpPlayerUser.cpp:44]LIVE::rtmp sent video_header now:1726066872210 host:192.168.56.1:14564
+2024-09-11T23:02:43 408 ERROR [TcpConnection.cpp:365] host : 192.168.56.1:14564 timeout and close it.
+2024-09-11T23:02:43 408 TRACE [TcpServer.cpp:80][OnConnectionClose] host : 192.168.56.1:14564 closed.
+2024-09-11T23:02:43 408 DEBUG [Session.cpp:113][CloseUser]LIVE::remove publisher,session name:czx.com/live/test,user:192.168.56.1:14564,elapsed:95453,ReadyTime:-509897474,stream time:99852
+2024-09-11T23:03:50 408 TRACE [TcpServer.cpp:80][OnConnectionClose] host : 192.168.56.168:54060 closed.
