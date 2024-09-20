@@ -35,9 +35,6 @@ namespace lss
             // 指向 EventLoop 对象的指针，用于保存当前的事件循环
             EventLoop *loop_{nullptr};
 
-            // 事件循环的线程
-            std::thread thread_;
-
             // 互斥锁，保护共享资源的访问
             std::mutex lock_;
 
@@ -50,6 +47,9 @@ namespace lss
             std::once_flag once_;
 
             std::promise<int> promise_loop_;
+
+            // 事件循环的线程
+            std::thread thread_;
         };
     }
 }
