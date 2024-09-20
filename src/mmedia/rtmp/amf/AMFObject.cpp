@@ -6,6 +6,7 @@
 #include "AMFDate.h"
 #include "AMFString.h"
 #include "AMFLongString.h"
+#include "AMFNull.h"
 
 using namespace lss::mm;
 
@@ -198,6 +199,9 @@ int AMFObject::Decode(const char *data, int size, bool has)
             {
                 // 输出调试信息，表明遇到了 Null 类型
                 RTMP_TRACE << " Null.";
+
+                // 将解析后的 AMFObject 对象存储到 properties_ 容器中
+                properties_.emplace_back(std::move(std::make_shared<AMFNull>()));  
                 break;
             }
 
@@ -571,6 +575,9 @@ int AMFObject::DecodeOnce(const char *data, int size, bool has)
         {
             // 输出 "Null." 调试信息
             RTMP_TRACE << " Null.";
+
+            // 将解析后的 AMFObject 对象存储到 properties_ 容器中
+            properties_.emplace_back(std::move(std::make_shared<AMFNull>()));
             break;
         }
 
