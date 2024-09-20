@@ -331,11 +331,11 @@ void RtmpHandShake::CreateC2S2(const char *data, int bytes, int offset)
         // 如果是客户端，使用客户端密钥进行 HMAC 计算
         if (is_client_)
         {
-            CalculateDigest(digest_, 32, 0, rtmp_player_key, sizeof(rtmp_player_key), digest);
+            CalculateDigest((const uint8_t *)(data + offset), 32, 0, rtmp_player_key, sizeof(rtmp_player_key), digest);
         }
         else    // 如果是服务端，使用服务端密钥进行 HMAC 计算
         {
-            CalculateDigest(digest_, 32, 0, rtmp_server_key, sizeof(rtmp_server_key), digest);
+            CalculateDigest((const uint8_t *)(data + offset), 32, 0, rtmp_server_key, sizeof(rtmp_server_key), digest);
         }
 
         // 计算 C2S2 数据包的 HMAC 签名，并将结果填充到数据包末尾
