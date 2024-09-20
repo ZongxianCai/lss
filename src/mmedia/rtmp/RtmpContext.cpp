@@ -40,16 +40,16 @@ int32_t RtmpContext::Parse(MsgBuffer &buff)
         // 调用握手处理函数
         ret = handshake_.HandShake(buff);
 
-        // 如果是客户端，发送连接命令
-        if (is_client_)
-        {
-            SendConnect();
-        }
-
         // 握手成功，状态切换到消息处理阶段
         if (ret == 0)
         {
             state_ = kRtmpMessage;
+
+            // 如果是客户端，发送连接命令
+            if (is_client_)
+            {
+                SendConnect();
+            }
 
             // 如果缓冲区还有可读数据，继续解析
             if (buff.ReadableBytes() > 0)
@@ -123,8 +123,8 @@ int32_t RtmpContext::ParseMessage(MsgBuffer &buff)
 {
     // 消息格式（FMT）
     uint8_t fmt;
-    // 消息 CSID、长度、流 ID、时间戳
-    uint32_t csid, msg_len = 0, msg_sid = 0, timestamp = 0;
+    // 消息 CSID、长度、流 ID
+    uint32_t csid, msg_len = 0, msg_sid = 0;
     // 消息类型
     uint8_t msg_type = 0;
     // 缓冲区内可读字节数
@@ -203,8 +203,6 @@ int32_t RtmpContext::ParseMessage(MsgBuffer &buff)
         msg_sid = 0;
         // 初始化消息类型
         msg_type = 0;
-        // 初始化时间戳
-        timestamp = 0;
         // 定义新的时间戳
         int32_t ts = 0;
 
@@ -217,6 +215,55 @@ int32_t RtmpContext::ParseMessage(MsgBuffer &buff)
             prev = std::make_shared<RtmpMsgHeader>();
         }
 
+        // 获取当前消息的长度
+        msg_len = prev->msg_len;
+
+        // 根据 fmt 值判断消息格式
+        if (fmt == kRtmpFmt0 || fmt == kRtmpFmt1)
+        {
+            // 如果是格式 0 或格式 1，从数据中读取 24 位的消息长度
+            msg_len = BytesReader::ReadUint24T((pos + parsed) + 3);
+        }
+        // 如果消息长度仍为 0，使用默认的输入块大小
+        else if (msg_len == 0)
+        {
+            msg_len = in_chunk_size_;
+        }
+
+        // 从 in_packets_ 中获取对应 csid 的数据包
+        PacketPtr &packet = in_packets_[csid];
+
+        // 如果该数据包尚不存在，创建一个新的数据包
+        if (!packet)
+        {
+            // 根据消息长度创建新的数据包
+            packet = Packet::NewPacket(msg_len);
+
+            // 创建新的消息头
+            RtmpMsgHeaderPtr header = std::make_shared<RtmpMsgHeader>();
+
+            // 设置 chunk stream ID
+            header->cs_id = csid;
+
+            // 设置消息长度
+            header->msg_len = msg_len;
+
+            // 设置消息序列 ID
+            header->msg_sid = msg_sid;
+
+            // 设置消息类型
+            header->msg_type = msg_type;
+
+            // 设置时间戳为 0
+            header->timestamp = 0;
+
+            // 将消息头附加到数据包中 
+            packet->SetExt(header);          
+        }
+
+        // 获取数据包的消息头
+        RtmpMsgHeaderPtr header = packet->Ext<RtmpMsgHeader>();
+
         // 根据不同的 FMT 值，解析消息头部
         if (fmt == kRtmpFmt0)   // FMT0：完整消息头部
         {
@@ -226,15 +273,15 @@ int32_t RtmpContext::ParseMessage(MsgBuffer &buff)
             // 重置时间戳增量
             in_deltas_[csid] = 0;
             // 当前时间戳
-            timestamp = ts;
+            header->timestamp = ts;
             // 读取 24 位的消息长度
-            msg_len = BytesReader::ReadUint24T(pos + parsed);
+            header->msg_len = BytesReader::ReadUint24T(pos + parsed);
             parsed += 3;
             // 读取 8 位的消息类型
-            msg_type = BytesReader::ReadUint8T(pos + parsed);
+            header->msg_type = BytesReader::ReadUint8T(pos + parsed);
             parsed += 1;
             // 读取 32 位的消息流 ID
-            memcpy(&msg_sid, pos + parsed, 4);
+            memcpy(&header->msg_sid, pos + parsed, 4);
             parsed += 4;
         }
         else if (fmt == kRtmpFmt1)  // FMT1：部分消息头部
@@ -245,15 +292,15 @@ int32_t RtmpContext::ParseMessage(MsgBuffer &buff)
             // 保存时间戳增量
             in_deltas_[csid] = ts;
             // 计算当前时间戳
-            timestamp = ts + prev->timestamp;
+            header->timestamp = ts + prev->timestamp;
             // 读取 24 位的消息长度
-            msg_len = BytesReader::ReadUint24T(pos + parsed);
+            header->msg_len = BytesReader::ReadUint24T(pos + parsed);
             parsed += 3;
             // 读取 8 位的消息类型
-            msg_type = BytesReader::ReadUint8T(pos + parsed);
+            header->msg_type = BytesReader::ReadUint8T(pos + parsed);
             parsed += 1;
             // 使用之前的消息流 ID
-            msg_sid = prev->msg_sid;
+            header->msg_sid = prev->msg_sid;
         }
         else if (fmt == kRtmpFmt2)  // FMT2：最小消息头部
         {
@@ -263,24 +310,27 @@ int32_t RtmpContext::ParseMessage(MsgBuffer &buff)
             // 保存时间戳增量
             in_deltas_[csid] = ts;
             // 计算当前时间戳
-            timestamp = ts + prev->timestamp;
+            header->timestamp = ts + prev->timestamp;
             // 使用之前的消息长度
-            msg_len = prev->msg_len;
+            header->msg_len = prev->msg_len;
             // 使用之前的消息类型
-            msg_type = prev->msg_type;
+            header->msg_type = prev->msg_type;
             // 使用之前的消息流 ID
-            msg_sid = prev->msg_sid;
+            header->msg_sid = prev->msg_sid;
         }    
         else if (fmt == kRtmpFmt3)  // FMT3：无消息头部
         {
-            // 使用之前的时间戳增量计算当前时间戳
-            timestamp = in_deltas_[csid] + prev->timestamp;
+            if (header->timestamp == 0)
+            {
+                // 使用之前的时间戳增量计算当前时间戳
+                header->timestamp = in_deltas_[csid] + prev->timestamp;
+            }
             // 使用之前的消息长度
-            msg_len = prev->msg_len;
+            header->msg_len = prev->msg_len;
             // 使用之前的消息类型
-            msg_type = prev->msg_type;
+            header->msg_type = prev->msg_type;
             // 使用之前的消息流 ID
-            msg_sid = prev->msg_sid;
+            header->msg_sid = prev->msg_sid;
         } 
 
         // 检查是否使用扩展时间戳
@@ -312,40 +362,40 @@ int32_t RtmpContext::ParseMessage(MsgBuffer &buff)
             if (fmt != kRtmpFmt0)
             {
                 // 更新当前时间戳
-                timestamp = ts + prev->timestamp;
+                header->timestamp = ts + prev->timestamp;
                 // 保存当前时间戳增量
                 in_deltas_[csid] = ts;
             }
         }
 
-        // 获取当前 CSID 对应的数据包指针
-        PacketPtr &packet = in_packets_[csid];
+        // // 获取当前 CSID 对应的数据包指针
+        // PacketPtr &packet = in_packets_[csid];
 
-        // 如果尚未初始化数据包
-        if (!packet)
-        {
-            // 创建一个新数据包，大小为消息长度
-            packet = Packet::NewPacket(msg_len);
-        }
+        // // 如果尚未初始化数据包
+        // if (!packet)
+        // {
+        //     // 创建一个新数据包，大小为消息长度
+        //     packet = Packet::NewPacket(msg_len);
+        // }
 
-        // 从数据包中获取消息头部的扩展信息
-        RtmpMsgHeaderPtr header = packet->Ext<RtmpMsgHeader>();
+        // // 从数据包中获取消息头部的扩展信息
+        // RtmpMsgHeaderPtr header = packet->Ext<RtmpMsgHeader>();
 
-        // 如果数据包中没有消息头部扩展信息
-        if (!header)
-        {
-            // 创建新的消息头部
-            header = std::make_shared<RtmpMsgHeader>();
-            // 将消息头部设置为数据包的扩展信息
-            packet->SetExt(header);
-        }
+        // // 如果数据包中没有消息头部扩展信息
+        // if (!header)
+        // {
+        //     // 创建新的消息头部
+        //     header = std::make_shared<RtmpMsgHeader>();
+        //     // 将消息头部设置为数据包的扩展信息
+        //     packet->SetExt(header);
+        // }
 
-        // 更新消息头部信息
-        header->cs_id = csid;
-        header->msg_len = msg_len;
-        header->msg_sid = msg_sid;
-        header->msg_type = msg_type;
-        header->timestamp = timestamp;
+        // // 更新消息头部信息
+        // header->cs_id = csid;
+        // header->msg_len = msg_len;
+        // header->msg_sid = msg_sid;
+        // header->msg_type = msg_type;
+        // header->timestamp = timestamp;
 
         // 计算本次可读取的字节数，受限于数据包剩余空间和块大小
         int bytes = std::min(packet->Space(), in_chunk_size_);
@@ -372,19 +422,23 @@ int32_t RtmpContext::ParseMessage(MsgBuffer &buff)
         total_bytes -= parsed;
 
         // 更新上次的消息头部信息
-        prev->cs_id = csid;
-        prev->msg_len = msg_len;
-        prev->msg_sid = msg_sid;
-        prev->msg_type = msg_type;
-        prev->timestamp = timestamp;
+        prev->cs_id = header->cs_id;
+        prev->msg_len = header->msg_len;
+        prev->msg_sid = header->msg_sid;
+        prev->msg_type = header->msg_type;
+        prev->timestamp = header->timestamp;
 
         // 如果数据包已填满
         if (packet->Space() == 0)
         {
+            // if (timestamp == 1031)
+            // {
+            //     RTMP_DEBUG << "aaa";
+            // }
             // 设置数据包的消息类型
-            packet->SetPacketType(msg_type);
+            packet->SetPacketType(header->msg_type);
             // 设置数据包的时间戳
-            packet->SetTimeStamp(timestamp);
+            packet->SetTimeStamp(header->timestamp);
             // 调用 MessageComplete 函数处理完整的消息
             MessageComplete(std::move(packet));
             // 重置数据包指针
@@ -427,7 +481,7 @@ void RtmpContext::SetPacketType(PacketPtr &packet)
 void RtmpContext::MessageComplete(PacketPtr && data)
 {
     // 当一个完整的消息包接收完毕时，打印消息类型和消息长度
-    RTMP_TRACE << " recv message type : " << data->PacketType() << " len : " << data->PacketSize() << std::endl;
+    // RTMP_TRACE << " recv message type : " << data->PacketType() << " len : " << data->PacketSize() << std::endl;
     
     // 获取数据包的消息类型
     // 获取数据包的类型
@@ -502,7 +556,7 @@ void RtmpContext::MessageComplete(PacketPtr && data)
             if (rtmp_handler_)
             {
                 // 调用 rtmp_handler_ 的 OnRecv 方法，处理接收到的数据
-                rtmp_handler_->OnRecv(connection_, data);
+                rtmp_handler_->OnRecv(connection_, std::move(data));
             }
             break;
         }
@@ -720,11 +774,10 @@ bool RtmpContext::BuildChunk(const PacketPtr &packet, uint32_t timestamp, bool f
                 {
                     memcpy(p, &timestamp, 4);
                     p += 4;
-                }      
-
+                } 
 
                 // 构建完头部后，将其保存到发送缓冲区，并更新 out_current_ 指针
-                BufferNodePtr nheader = std::make_shared<BufferNode>(out_current_, p-out_current_);
+                BufferNodePtr nheader = std::make_shared<BufferNode>(out_current_, p - out_current_);
                 sending_bufs_.emplace_back(std::move(nheader));
                 out_current_ = p;      
             }
@@ -1241,6 +1294,8 @@ void RtmpContext::SendUserCtrlMessage(short nType, uint32_t value1, uint32_t val
     {
         p += BytesWriter::WriteUint32T(body, value2);
     }
+
+    header->msg_len = p - body;
 
     // 设置数据包的实际大小为已写入的字节数
     packet->SetPacketSize(header->msg_len);
@@ -1907,27 +1962,29 @@ void RtmpContext::ParseNameAndTcUrl()
     // 使用自定义的字符串工具函数，将tc_url_按'/'分割成多个部分存储到list中
     std::vector<std::string> list = base::StringUtils::SplitString(tc_url_, "/");
 
-    // 如果分割出的list有6个元素，说明格式可能为rmtp://ip/domain:port/app/stream
-    if (list.size() == 6)
+    // 如果分割出的list有5个元素，说明格式可能为rmtp://ip/domain:port/app
+    if (list.size() == 5)
     {
         domain = list[3];  // 提取域名部分
         app_ = list[4];    // 提取app部分
-        name_ = list[5];   // 提取流名称部分
+        // name_ = list[5];   // 提取流名称部分
     }
-    // 如果分割出的list有5个元素，说明格式可能为rmtp://domain:port/app/stream
-    else if (list.size() == 5) 
+    // 如果分割出的list有4个元素，说明格式可能为rmtp://domain:port/app
+    else if (list.size() == 4) 
     {
         domain = list[2];
         app_ = list[3];
-        name_ = list[4];
+        // name_ = list[4];
     }
 
+    // !!!!!!!! 粗心问题，是 p 不是 pos
     auto p = domain.find_first_of(":");
+    
 
     // 如果找到，将域名部分提取出来
-    if (pos != std::string::npos)
+    if (p != std::string::npos)
     {
-        domain = tc_url_.substr(0, p);  // 提取域名部分
+        domain = domain.substr(0, p);  // 提取域名部分
     }
 
     session_name_.clear();  // 清空session_name_，准备重新拼接
@@ -2000,6 +2057,9 @@ void RtmpContext::HandlePublish(AMFObject &obj)
     // 从AMF对象中获取流名称
     name_ = obj.Property(3)->String();
 
+    // 解析流名称和tcUrl
+    ParseNameAndTcUrl();
+
     // 输出日志，记录接收到的publish消息的会话名称和参数
     RTMP_TRACE << " recv publish session_name : " << session_name_ << " param : " << param_ << " host : " << connection_->PeerAddr().ToIpPort();
 
@@ -2068,16 +2128,24 @@ void RtmpContext::HandleError(AMFObject &obj)
 
 void RtmpContext::Play(const std::string &url)
 {
+    // 设置为客户端模式
     is_client_ = true;
+    // 设置为播放器模式
     is_player_ = true;
+    // 保存传入的 URL
     tc_url_ = url;
+    // 解析名称和 TC URL
     ParseNameAndTcUrl();
 }
 
 void RtmpContext::Publish(const std::string &url)
 {
+    // 设置为客户端模式
     is_client_ = true;
+    // 设置为播放器模式
     is_player_ = false;
+    // 保存传入的 URL
     tc_url_ = url;
+    // 解析名称和 TC URL
     ParseNameAndTcUrl();
 }
