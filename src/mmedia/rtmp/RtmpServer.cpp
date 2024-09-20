@@ -32,6 +32,8 @@ void RtmpServer::Start()
 
     // 调用基类的 Start 方法，启动服务器
     TcpServer::Start();
+
+    RTMP_DEBUG << " RtmpServer Start.";
 }
 
 void RtmpServer::Stop()
@@ -52,7 +54,7 @@ void RtmpServer::OnNewConnection(const TcpConnectionPtr &conn)
     // RtmpHandShakePtr shake = std::make_shared<RtmpHandShake>(conn);
 
     // 创建一个 RtmpContext 对象，用于处理 RTMP 数据包
-    RtmpContextPtr shake = std::make_shared<RtmpContext>(conn, nullptr);
+    RtmpContextPtr shake = std::make_shared<RtmpContext>(conn, rtmp_handler_);
     
     // 将 RtmpHandShake 对象存储在连接的上下文中，方便后续使用
     conn->SetContext(kRtmpContext, shake);
