@@ -53,7 +53,7 @@ void PipeEvent::OnRead()
         return;
     }
     // 如果读取成功，则输出读取到的数据
-    std::cout << "pipe read success. tmp : " << tmp << std::endl;
+    // std::cout << "pipe read success. tmp : " << tmp << std::endl;
 }
 
 // 处理管道关闭事件
