@@ -87,8 +87,8 @@ int main(int argc, const char **agrv)
         // 创建 RtmpClient 对象，并传入事件循环对象和自定义的 RTMP 处理器
         RtmpClient client(loop, new RtmpHandlerImpl());
 
-        // 调用 Play 函数，开始播放指定的 RTMP 流媒体URL
-        client.Play("rtmp://hx.com/live/test");
+        // 调用 Play 函数，开始播放指定的 RTMP 流媒体 URL
+        client.Play("rtmp://czx.com/live/test");
 
         // 无限循环，保持主线程不退出
         while (1)
