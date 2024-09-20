@@ -129,6 +129,12 @@ bool AMFAny::IsObject()
     return false;
 }
 
+bool AMFAny::IsNull()
+{
+    // 默认返回false，子类可以重写此方法以返回正确结果
+    return false;
+}
+
 const std::string &AMFAny::Name() const
 {
     // 返回name_成员变量的值

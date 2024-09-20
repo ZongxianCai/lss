@@ -80,6 +80,9 @@ namespace lss
             // 虚函数，判断是否为对象类型
             virtual bool IsObject();
 
+            // 虚函数，判断是否为空类型
+            virtual bool IsNull();
+
             // 纯虚函数，用于输出调试信息，子类需要实现
             virtual void Dump() const = 0;
 
